@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Fraud Orders Measures Correlation - Jun 2013 - SPLOM</title>
+  <style type="text/css">
+
+    body {
+      font: 10px sans-serif;background-color:#d8d8d8;
+    }
+
+    table.layout1 {background-color:oldlace;}
+
+    table.layout1 td.rowh,td.colh,td.nbsp {background-color:#d8d8d8;font-weight:bold;}
+    table.layout1 td.rowh {text-align:right;}
+    table.layout1 td.colh {text-align:center;}
+    table.layout1 td.diag {background-color:navajowhite;}
+    table.layout1 td.meta {background-color:antiquewhite;text-align:center;font-size:18px;}
+
+    table.chars th {text-align:right;}
+    table.chars {margin-left:auto;margin-right:auto;}
+
+
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .dot {
+      stroke: #000;
+    }
+  </style>
+
+  <script type="text/javascript" src="./res/d3.v3.min.js"></script>
+  <script type="text/javascript" src="./data/dataset-4.js"></script>
+
+  <script>
+
+  var dat = SKU_FRAUD_CHARS;
+
+  var margin = {top: 10, right: 10, bottom: 10, left: 10},
+    width = 160 - margin.left - margin.right,
+    height = 160 - margin.top - margin.bottom;
+  var color_scale = d3.scale.category10();
+
+
+  function plotScatter(anchor, data, xLayer, yLayer, categoryLayer) {
+    //d3.select(anchor).text(data[0].ct);
+
+    var svg = d3.select(anchor).append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x_scale = d3.scale.linear().range([0, width]);
+    var y_scale = d3.scale.linear().range([height, 0]);
+    x_scale.domain(d3.extent(data, function(d) { return +d[xLayer]; })).nice();
+    y_scale.domain(d3.extent(data, function(d) { return +d[yLayer]; })).nice();
+    var xAxis = d3.svg.axis().scale(x_scale).orient("bottom").tickValues([]);
+    var yAxis = d3.svg.axis().scale(y_scale).orient("left").tickValues([]);
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+    svg.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 3.0)
+      .attr("opacity", 0.75)
+      .style("fill", function(d) { return color_scale(d[categoryLayer]); })
+      .attr("cx", function(d) { return x_scale(d[xLayer]); })
+      .attr("cy", function(d) { return y_scale(d[yLayer]); });
+
+  }
+
+  function plot() {
+    plotScatter('#r1c1', dat, 'ls', 'ts', 'ct');
+    plotScatter('#r2c1', dat, 'db', 'ts', 'ct');
+    plotScatter('#r2c2', dat, 'db', 'ls', 'ct');
+    plotScatter('#r3c1', dat, 'di', 'ts', 'ct');
+    plotScatter('#r3c2', dat, 'di', 'ls', 'ct');
+    plotScatter('#r3c3', dat, 'di', 'db', 'ct');
+  }
+
+  </script>
+</head>
+<body onload="plot()">
+
+<h1>Fraud Orders Measures Correlation - Jun 2013 - SPLOM</h1>
+
+<table cellspacing="0" class="layout1">
+ <tr>
+  <td class="rowh"><div id="r0c0">Total Score</div></td>
+  <td class="diag"><div id="r0c1"></div>
+    <table class="chars">
+    <tr><th>MODE</th>    <td>0</td></tr>
+    <tr><th>MEDIAN</th>  <td>74057</td></tr>
+    <tr><th>MEAN</th>    <td>71788</td></tr>
+    <tr><th>STDDEV</th>  <td>46779.52</td></tr>
+    <tr><th>VARIANCE</th><td>2188323133.11</td></tr>
+    </table>
+  </td>
+  <td class="meta"><div id="r0c2">0.12</div></td>
+  <td class="meta"><div id="r0c3">0.046</div></td>
+  <td class="meta"><div id="r0c4">0.17</div></td>
+ </tr>
+ <tr>
+  <td class="rowh"><div id="r1c0">Line Speed</div></td>
+  <td class="plot"><div id="r1c1"></div></td>
+  <td class="diag"><div id="r1c2"></div>
+    <table class="chars">
+    <tr><th>MODE</th>    <td>2</td></tr>
+    <tr><th>MEDIAN</th>  <td>2</td></tr>
+    <tr><th>MEAN</th>    <td>1.95</td></tr>
+    <tr><th>STDDEV</th>  <td>0.95</td></tr>
+    <tr><th>VARIANCE</th><td>0.91</td></tr>
+    </table>
+  </td>
+  <td class="meta"><div id="r1c3">0.22</div></td>
+  <td class="meta"><div id="r1c4">0.2</div></td>
+ </tr>
+ <tr>
+  <td class="rowh"><div id="r2c0">BillArea-BillZip</div></td>
+  <td class="plot"><div id="r2c1"></div></td>
+  <td class="plot"><div id="r2c2"></div></td>
+  <td class="diag"><div id="r2c3"></div>
+    <table class="chars">
+    <tr><th>MODE</th>    <td>2</td></tr>
+    <tr><th>MEDIAN</th>  <td>12</td></tr>
+    <tr><th>MEAN</th>    <td>251.38</td></tr>
+    <tr><th>STDDEV</th>  <td>708.32</td></tr>
+    <tr><th>VARIANCE</th><td>501710.57</td></tr>
+    </table>
+  </td>
+  <td class="meta"><div id="r2c4">0.02</div></td>
+ </tr>
+   <tr>
+  <td class="rowh"><div id="r3c0">IPArea-IPZip</div></td>
+  <td class="plot"><div id="r3c1"></div></td>
+  <td class="plot"><div id="r3c2"></div></td>
+  <td class="plot"><div id="r3c3"></div></td>
+  <td class="diag"><div id="r3c4"></div>
+    <table class="chars">
+    <tr><th>MODE</th>    <td>6</td></tr>
+    <tr><th>MEDIAN</th>  <td>80</td></tr>
+    <tr><th>MEAN</th>    <td>1236.32</td></tr>
+    <tr><th>STDDEV</th>  <td>2234.96</td></tr>
+    <tr><th>VARIANCE</th><td>4995066.48</td></tr>
+    </table>
+  </td>
+ </tr>
+ <tr>
+  <td class="nbsp"><div id="r4c0"></div></td>
+  <td class="colh"><div id="r4c1">Total Score</div></td>
+  <td class="colh"><div id="r4c2">Line Speed</div></td>
+  <td class="colh"><div id="r4c3">BillArea-BillZip</div></td>
+  <td class="colh"><div id="r4c4">IPArea-IPZip</div></td>
+ </tr>
+</table>
+
+</body>
+</html>

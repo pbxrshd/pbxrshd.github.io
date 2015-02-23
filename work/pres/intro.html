@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  <style type="text/css">
+  html {height:100%;}
+  body {height:98%;background-color:black;color:white;}
+  table {height:100%;width:70%;}
+  .center {margin-left:auto; margin-right:auto;}
+  div.quote {font-family:font-family:sans-serif;}
+  div.quote1 {font-size:22px;}
+  div.quote2 {font-size:24px;}
+  div.quote3 {font-size:23px;}
+  div.quote4 {font-size:24px;}
+
+  div.cite {margin-top:20px;margin-leftx:20px;color:gainsboro;font-size:14px;font-style:italic;font-family: arial, helvetica, clean, sans-serif;}
+  span.em {font-weight:bold;color:white;}
+  /*
+  div.quote1,div.quote3,div.cite1,div.cite3 {padding-right:80px;}
+  div.quote2,div.quote4,div.cite2,div.cite4 {padding-left:80px;}
+  */
+  </style>
+  <script type="text/javascript" src="./res/jquery.js"></script>
+  <script type="text/javascript" src="./res/jquery.color.min.js"></script>
+  <script type="text/javascript">
+
+    var emElements;
+
+    jQuery(document).ready(function() {
+        emElements = jQuery("span.em").toArray();
+        setInterval(function(){
+         //var elems = jQuery("span.em").toArray();
+         var randEmElement = jQuery(emElements[Math.floor(Math.random()*emElements.length)]);
+         //randEmElement.toggle();
+         randEmElement.animate({color:'#ffff00'},3000);
+         randEmElement.animate({color:'#ffffff'},3000);
+
+},9000);});
+
+  </script>
+
+</head>
+
+<body >
+
+    <table  class="center" borderx="1">
+      <tr><td>
+<div class="quote quote1 center">
+Gartner sees the maturation path of data-driven companies as moving from descriptive reports and queries that detail current conditions
+to diagnostic analyses and <span class="em">visualizations</span> that reveal why performance lagged in some areas and excelled in others.
+The next step up is to <span class="em">predictive analytics</span> that tell you where things are headed and finally on to  <span class="em">prescriptive analytics</span> that
+guide decisions for optimum performance.
+</div>
+<div class="cite cite1">
+<li>Gartner's 2013 "Magic Quadrant for Business Intelligence and Analytics Platforms"</li>
+</div>
+      </td></tr>
+      <tr><td>
+<div class="quote quote2 center">
+"Almost every big company is doing something with <span class="em">predictive analytics</span>, but they have yet to take it mainstream.
+It usually has something to do with customer churn, marketing campaign responsiveness, <span class="em">fraud detection</span> or supply chain demand forecasting."
+</div>
+<div class="cite cite2">
+<li>Gartner analyst and report co-author Kurt Schlegel in an interview with InformationWeek, Feb 2013</li>
+</div>
+      </td></tr>
+      <tr><td>
+<div class="quote quote3 center">
+"Customers indicate that the <span class="em">user interface</span> needs considerable updating to enable improved
+fraud analyst productivity."
+</div>
+<div class="cite cite3">
+<li>Gartner Magic Quadrant for Web Fraud Detection, 30 May 2013</li>
+</div>
+      </td></tr>
+      <tr><td>
+<div class="quote quote4 center">
+Insights into deep and broad data sets are easier to show with <span class="em">data visualization</span>.
+</div>
+<div class="cite cite4">
+<li>The Forrester Wave Report on Advanced Data Visualization (ADV), Q3 2012</li>
+</div>
+      </td></tr>
+
+    </table>
+
+
+    </body>
+    </html>

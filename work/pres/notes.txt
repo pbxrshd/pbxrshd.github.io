@@ -1,0 +1,141 @@
+
+> splom(~iris[1:4])
+
+
+
+> iris[1:4,]
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+
+/home/nr/Dropbox/work/skunk/pres/data
+
+> data1 = read.csv("splom_data.csv")
+
+> panel.pearson <- function(x, y, ...) {
+horizontal <- (par("usr")[1] + par("usr")[2]) / 2;
+vertical <- (par("usr")[3] + par("usr")[4]) / 2;
+text(horizontal, vertical, format(abs(cor(x,y)), digits=2))
+}
+> pairs(data1[1:4], main = "Fraud Orders Measures Correlation", pch = 21, bg = c("red","green3","blue")[unclass(iris$Species)], upper.panel=panel.pearson)
+
+
+getwd()
+setwd()
+q()
+help(read.csv)
+
+
+
+ See Peter Drucker's new book, The Essential Drucker, for a thoughtful chapter on "the information executives need today."
+ That is, you should start by considering the intellectual problems that the displays are supposed to help with.
+ The point of information displays is to assist thinking; therefore, ask first of all:
+  What are the thinking tasks that the displays are supposed to help with?
+
+
+
+http://en.wikipedia.org/wiki/Self-organizing_map
+http://www.sciencedirect.com/science/article/pii/S0957417407003995
+
+
+http://ijcsi.org/papers/IJCSI-10-3-2-172-179.pdf (A Novel Approach for Credit Card Fraud Detection Targeting the Indian Market)
+
+http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=4371071&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D4371071
+
+http://www.bradblock.com/Outlier_Detection_for_High_Dimensional_Data.pdf
+
+
+deepdyve rshdpbx@gmail.com 8o5T#*ey
+
+
+
+
+circular edge graph for relationships between skus
+
+
+
+differences between categorical and quantitative data
+  http://eagereyes.org/basics/data-continuous-vs-categorical
+  http://www.perceptualedge.com/articles/dmreview/quant_vs_cat_data.pdf
+
+parallel sets are for categorical data
+  http://eagereyes.org/parallel-sets
+
+parallel coords for quantitative data, various numeric entities -
+  http://exposedata.com/parallel/
+  http://eagereyes.org/techniques/parallel-coordinates
+
+usmap geo, with connections http://mbostock.github.io/d3/talk/20111116/airports.html
+  (zoomable http://bl.ocks.org/thedod/4548858)
+
+chord diag http://bost.ocks.org/mike/uberdata/
+
+zoomable time-series visualization, as an area graph http://mbostock.github.io/d3/talk/20111018/area-gradient.html
+
+circular heatchart, for cyclical data, like over a day http://prcweb.co.uk/lab/circularheat/
+
+radar chart, with animation over time, http://www.larsko.org/v/euc/
+
+swimlane chart (analyst performance?) over time http://bl.ocks.org/bunkat/1962173
+
+hierarchical edge bundling http://bl.ocks.org/mbostock/1044242
+
+sparklines
+
+heatmap
+
+
+
+orders per hour
+
+Entity (SKU/Product/Event/Airline Route) Monitoring -
+ Is a particular product being targeted? Has something low risk now turned high risk?
+ Profile Builder can monitor, in real-time, summarized fraud rates at the product/SKU level, across airline route networks, at events/locations, against a specific artist or genre,
+ or similar entities,
+Customer Affinity (Loyalty) -
+  Are they purchasing a product or exhibiting a behavior that could increase their affinity for your brand?
+   Leverage Profile Builder to identify real-time demographics, spend metrics, and purchase habits.
+   Whether it is a first-time purchaser or a repeat buyer, reward the customer by creating customized programs such as discounting, cross-selling/up-selling, surveying, etc.
+Spot changes in purchasing behavior – compare current transaction value to historical purchase values; digital content versus physical content; different city pairs for travel; different types of events for ticketing
+By leveraging real-time aggregated data – IP address, Device ID, spending habits, email, phone number, physical address and more, Profile Builder can ascertain anomalous patterns and changes from the customer’s normal activity to create automated alerts
+
+
+
+presentation:
+-------------
+ADVISOR
+quotes from gartner,wixted
+data scientist -sexiest job in the 21st century Hal Varian , Chief Economist at Google and founding dean of UC Berkley Schol of Information
+
+complements the deep analysis
+ the type of user this is targeting
+  - analyser, manager, astute
+ - explore relationships, looking to get understanding between dynamics of data reln
+ - self service discovery
+ also has report dataunderlying
+ smaller dataset
+  impact of rule in ruleset
+  visualize muli dimensional trending
+  dashboards
+  orders / hr
+   fraud rate current / last week
+   allows quick testing of hypotheses
+   then can identify which needs deeper analysis
+
+apple plabook, control every aspct of what they get, then give them the illusion of control
+make them fanboys, hig powered motorcycle analogy
+
+when dealing with multivariate data, effective
+might seem like information overload, but to the trained eye these are invaluable
+
+of course, also just the eye candy value
+
+
+i want to be the data engineer building the tools for the data scientist
+we are building a platform tht will serve the needs of data scientists
+go beyond just providing a amatuer toolkit. i'm talking about a fully equipped machine shop
+that willbe our competitive advantage, they don't have to invest in building a backend analytics themselvs
+
+

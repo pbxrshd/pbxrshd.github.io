@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+    <style type="text/css">
+body {
+  font-size:36px;
+  font-family: "Lucida Grande", arial, helvetica, clean, sans-serif;
+  height: 640px;
+  margin: 80px 160px 80px 160px;
+  overflow: hidden;
+  position: relative;
+  width: 960px;
+}
+
+a:link, a:visited {
+  color: #777;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #666;
+}
+
+blockquote {
+  margin: 0;
+}
+
+
+body > ul {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 64px;
+}
+
+h1, h2, h3 {
+  font-weight: inherit;
+  margin: 0;
+}
+
+h2, h3 {
+  text-align: right;
+  font-size: inherit;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+h2 {
+  font-size: 24px;
+  position: absolute;
+}
+
+h3 {
+  bottom: -20px;
+  font-size: 18px;
+}
+
+.invert {
+  background: #1f1f1f;
+  color: #dcdccc;
+}
+
+.invert h2, .invert h3 {
+  color: #7f9f7f;
+}
+
+.string, .regexp {
+  color: #f39;
+}
+
+.keyword {
+  color: #00c;
+}
+
+.comment {
+  color: #777;
+  font-style: oblique;
+}
+
+.number {
+  color: #369;
+}
+
+.class, .special {
+  color: #1181B8;
+}
+
+body > svg {
+  position: absolute;
+  top: -80px;
+  left: -160px;
+}
+#states path {
+  fill: #ccc;
+  stroke: #fff;
+}
+
+path.arc {
+  pointer-events: none;
+  fill: none;
+  stroke: #000;
+  display: none;
+}
+
+path.cell {
+  fill: none;
+  pointer-events: all;
+}
+
+circle {
+  fill: steelblue;
+  fill-opacity: .8;
+  stroke: #fff;
+}
+
+#cells.voronoi path.cell {
+  stroke: brown;
+}
+
+#cells g:hover path.arc {
+  display: inherit;
+}
+
+    </style>
+  </head>
+  <body>
+    <h2>
+      <span id="t1">State</span> (<span id="t2">count</span>)<br />
+      Fraud Orders Bill/Ship States Links - June 2013
+    </h2>
+    <div style="position:absolute;bottom:0;font-size:18px;">
+      <input type="checkbox" id="voronoi"> <label for="voronoi">show Voronoi</label>
+    </div>
+    <script type="text/javascript" src="./res/d3.js"></script>
+    <script type="text/javascript" src="./res/d3.csv.js"></script>
+    <script type="text/javascript" src="./res/d3.geo.js"></script>
+    <script type="text/javascript" src="./res/d3.geom.js"></script>
+    <script type="text/javascript" src="./data/us-states.js"></script>
+    <script type="text/javascript" src="./data/us-states-coords.js"></script>
+    <script type="text/javascript" src="./data/dataset-2.js"></script>
+    <script type="text/javascript">
+
+var w = 1280,
+    h = 800;
+
+var projection = d3.geo.azimuthal()
+    .mode("equidistant")
+    .origin([-98, 38])
+    .scale(1400)
+    .translate([640, 360]);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var svg = d3.select("body").insert("svg:svg", "h2")
+    .attr("width", w)
+    .attr("height", h);
+
+var states = svg.append("svg:g")
+    .attr("id", "states");
+
+var circles = svg.append("svg:g")
+    .attr("id", "circles");
+
+var cells = svg.append("svg:g")
+    .attr("id", "cells");
+
+d3.select("input[type=checkbox]").on("change", function() {
+  cells.classed("voronoi", this.checked);
+});
+
+/*
+d3.json("./MapConnections_files/us-states.json", function(collection) {
+  states.selectAll("path")
+      .data(collection.features)
+    .enter().append("svg:path")
+      .attr("d", path);
+});
+*/
+states.selectAll("path")
+  .data(US_STATES_JSON.features)
+  .enter().append("svg:path")
+  .attr("d", path);
+
+function loadLinks(links) {
+  var linksByOrigin = {},
+      countByAirport = {},
+      locationByAirport = {},
+      positions = [];
+  var arc = d3.geo.greatArc()
+      .source(function(d) { return locationByAirport[d.source]; })
+      .target(function(d) { return locationByAirport[d.target]; });
+  links.forEach(function(link) {
+    var origin = link.bs,
+        destination = link.ss,
+        links = linksByOrigin[origin] || (linksByOrigin[origin] = []);
+    links.push({source: origin, target: destination});
+    countByAirport[origin] = (countByAirport[origin] || 0) + 1;
+    countByAirport[destination] = (countByAirport[destination] || 0) + 1;
+  });
+  function loadStatesCoords(usStates) {
+    // Only consider states with at least one link.
+    usStates = usStates.filter(function(airport) {
+      if (countByAirport[airport.st]) {
+        var location = [+airport.lon, +airport.lat];
+        locationByAirport[airport.st] = location;
+        positions.push(projection(location));
+        return true;
+      }
+    });
+    // Compute the Voronoi diagram of states' projected positions.
+    var polygons = d3.geom.voronoi(positions);
+    var g = cells.selectAll("g")
+        .data(usStates)
+      .enter().append("svg:g");
+    g.append("svg:path")
+        .attr("class", "cell")
+        .attr("d", function(d, i) { return "M" + polygons[i].join("L") + "Z"; })
+        .on("mouseover", function(d, i) { d3.select("#t1").text(d.st); d3.select('#t2').text(countByAirport[d.st]);});
+    g.selectAll("path.arc")
+        .data(function(d) { return linksByOrigin[d.st] || []; })
+      .enter().append("svg:path")
+        .attr("class", "arc")
+        .attr("d", function(d) {return path(arc(d)); });
+    circles.selectAll("circle")
+        .data(usStates)
+      .enter().append("svg:circle")
+        .attr("cx", function(d, i) { return positions[i][0]; })
+        .attr("cy", function(d, i) { return positions[i][1]; })
+        .attr("r", function(d, i) { return Math.sqrt(countByAirport[d.st]); })
+        .sort(function(a, b) { return countByAirport[b.st] - countByAirport[a.st]; });
+  }
+  loadStatesCoords(US_STATES_COORDS_JSON);
+}
+loadLinks(STATES_LINKS);
+
+
+    </script>
+  </body>
+</html>

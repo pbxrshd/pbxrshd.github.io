@@ -1,0 +1,1038 @@
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Transaction Scores Report (Scores By : 100) </title>
+
+    <!-- TODO parameterize the inclusion of the foll. -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <style type="text/css">
+html {
+  height: 100%;
+}
+
+body {
+  margin: 20;
+  padding: 0;
+}
+
+body,table {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  color: #434040;
+}
+
+h1 {
+  color: #800000;
+}
+
+h2 {
+
+}
+
+div.mainLayout {
+  display: table;
+  margin: 0 auto 10px auto;
+}
+
+div.section {
+  clear: both;
+  min-width: 1024px;
+  max-width: none !important;
+  margin: 0 auto 10px auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+div.settings1 {
+  font-size: 18px;
+  float: right;
+}
+
+div.br {
+  clear: both;
+}
+
+div.title1 {
+  clear: both;
+  min-width: 1024px;
+  max-width: none !important;
+  margin: 20px auto;
+  font-size:30px;
+  letter-spacing: 0.03em;
+  font-weight: normal;
+  text-transform: uppercase;
+  color: inherit;
+}
+div.title2 {
+  color: maroon;
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 6px 0px 12px 0px;
+}
+div.tb1 {
+  text-align:right;
+  font-size:0.8em;
+  color:silver;
+  cursor:pointer;
+}
+
+.footer1 {
+  margin: 0 auto 0 auto
+}
+
+/* common style directives */
+.em {
+  font-weight: bold;
+}
+
+.it {
+  font-style: italic;
+}
+
+.al {
+  text-align: left;
+}
+
+.am {
+  text-align: center;
+}
+
+.ar {
+  text-align: right;
+}
+
+/* report criteria block related */
+.rc-container {
+  background-color: #f2f0f0;
+  border: 1px solid #d9d9d9;
+  padding: 15px;
+  width: 100%;
+  height: auto;  
+}
+.rc-title-row {
+  
+}
+.rc-title1 {
+  font-size: 24px;
+  color: #434040;
+  margin: 0 0 10px 0;
+  letter-spacing: 0.03em;  
+}
+.rc-title2 {
+  font-weight: normal;
+  text-align:right;
+  margin:10px 0px 0px 0px;
+}
+.rc-title-label {
+  padding: 0 10px 0 0 !important;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+.rc-title-value {
+  font-weight: normal;
+  font-size: 0.8em;
+}
+.rc-divider {
+  border:0px;
+  border-top: 1px solid #cccccc;
+  margin: 0px 0px 18px 0px;
+}
+.rc-criteria-row {
+  
+}
+.rc-label {
+  padding: 0 10px 0 0 !important;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+.rc-value {
+  font-weight: normal;
+  font-size: 0.8em;
+}
+
+/* banner related */
+.bnr {
+  background-color: #f2f0f0;
+  border: 1px solid #d9d9d9;
+  padding: 15px;
+  width: 100%;
+  height: auto;
+}
+
+.bnr .lbl {
+  font-weight: bold;
+  font-size: 0.9em;
+  text-align: right;
+  width: 32px;
+  white-space: nowrap;
+}
+
+.bnr .vlu {
+  font-size: 0.8em;
+  padding: 6px;
+}
+
+/* data table related */
+.data {
+  width: 100%;
+}
+
+.data th {
+  padding: 15px;
+  border-radius: 2px;
+  background-color: #434040;
+  color: #ffffff;
+}
+
+.data .th1 {
+  font-size: 0.8em;
+  background-color: #f25840;
+  border-radius: 0 0 4px 4px;
+  text-transform: uppercase;
+  padding: 15px;
+  line-height: 1.42857143;
+}
+
+.data .th2 {
+  background-color: #f36953;
+  border-radius: 0 0 4px 4px;
+}
+
+/*    data contains dr datarows */
+.data tr.dr:hover {
+  background-color: #fed976;
+  border: 1px solid black;
+}
+
+.data tr.dr td {
+  padding: 4px;
+}
+
+.data th, td {
+  font-size: 0.9em;
+}
+
+tr.z0 {
+  background-color: #ffffff;
+}
+
+tr.z1 {
+  background-color: #f1f1f1;
+}
+
+.data>tbody>tr:hover>td,.data>tbody>tr:hover>th {
+  background-color:#e0edee;
+}
+
+.data tbody th, .data tbody td {
+  /*padding: 8px 10px;*/
+}
+
+div.msg { /* status mesg */
+  font-weight: bold;
+  color: #800000;
+}
+
+.spaced-box { /* evenly distribute spaced-items in this container */
+  text-align: justify;
+}
+
+.spaced-item {
+  display: inline-block;
+}
+
+.spaced-buf { /* buffer */
+  width: 100%;
+  display: inline-block;
+  font-size: 0;
+  line-height: 0;
+}
+
+.sh1 { /* subheader1 */
+  background-color: #fd8d3c;
+  margin-left: 10px;
+  padding: 6px;
+  border-radius: 0 0 0 4px;
+}
+
+.sh1 .lbl {
+  font-weight: bold;
+  padding: 4px;
+}
+
+.sh1 .vlu {
+  font-style: italic;
+  padding: 4px;
+}
+
+.sh2 { /* subheader2 */
+  background-color: #feb24c;
+  margin-left: 18px;
+  padding: 4px;
+  border-radius: 0 0 0 4px;
+}
+
+.sh2 .lbl {
+  font-weight: bold;
+  padding: 4px;
+}
+
+.sh2 .vlu {
+  font-style: italic;
+  padding: 4px;
+}
+
+.sf1 { /* subfooter1 */
+  color: gray;
+  margin-top: 12px;
+}
+
+.sf1 .vlu {
+  font-style: italic;
+  padding: 4px;
+}
+
+
+.sflabel {
+  font-size:0.9em;
+  font-style:italic;
+  color:#6c7477;
+  padding: 24px 0px 0px 0px;
+}
+
+/* link hover context menus related */
+.linkctx {
+  color: #4b0082;
+  cursor: pointer;
+  display: inline;
+}
+
+.linkctx:hover {
+  color: #ff0000;
+}
+
+.linkctx:hover>ul {
+  display: block;
+}
+
+.linkctx>ul {
+  display: none;
+  position: absolute;
+  background: rgba(255, 255, 255, 1);
+  color: #4b0082;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 0px;
+  box-shadow: -8px 8px 8px #888888;
+  list-style-type: none;
+  font-weight: normal;
+}
+
+.linkctx li:hover {
+  color: #ff0000;
+}
+
+/* docked options menu related */
+div.dock1 {
+  position: fixed;
+  top: 5px;
+  right: 5px;
+}
+
+div.dock1:hover .dock1Content {
+  visibility: visible;
+}
+
+div.dock1Content {
+  position: absolute;
+  visibility: hidden;
+  background: rgba(255, 255, 255, 1);
+  top: 0px;
+  right: 0px;
+  padding: 4px;
+  border: 1px solid black;
+  border-radius: 4px;
+  box-shadow: -8px 8px 6px #c0c0c0;;
+}
+
+div.dock1 .dock1Item {
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+div.dock1 .dock1Item:hover {
+  color: red;
+}
+
+hr .divider {
+  background-color: #cccccc;
+}
+
+/********************
+ * Tree Reports
+ */
+
+.node {
+    list-style-type: none;
+}
+
+li.level-0 > label, li.level-0 > span {
+    color: #333333;
+    font-size: 20px;
+}
+
+li.level-1 > label, li.level-1 > span{
+    font-weight: bold;
+    font-size: 14px;
+}
+
+li.level-2 > label, li.level-2 > span{
+    text-transform: uppercase;
+}
+
+.bracket:after {
+    content:"]";
+}
+
+.bracket:before {
+    content:"[";
+}
+
+/* Equivalent to fa and fa-minus-square */
+li.expanded > label:first-child::before {
+    font-family:FontAwesome,'Open Sans', sans-serif;
+    font-style:normal;
+    font-weight:normal;
+    display:inline-block;
+    line-height:1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+
+    content:"\f146";
+}
+
+/* Equivalent to fa and fa-plus-square-o */
+li.collapsed > label:first-child::before {
+    font-family:FontAwesome,'Open Sans', sans-serif;
+    font-style:normal;
+    font-weight:normal;
+    display:inline-block;
+    line-height:1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+
+    content:"\f196"
+}
+
+ul.expanded {
+    display: inherit !important;
+}
+
+ul.collapsed {
+    display: none !important;
+}
+
+div.expand-links {
+    text-align: center;
+}
+
+.trend1-up:before {
+  content: "\f139"; /* fa-chevron-circle-up */
+  font-family:FontAwesome,'Open Sans', sans-serif;
+  font-style:normal;
+  font-weight:normal;
+  color : red;
+}
+.trend1-down:before {
+  content: "\f13a"; /* fa-chevron-circle-down */
+  font-family:FontAwesome,'Open Sans', sans-serif;
+  font-style:normal;
+  font-weight:normal;  
+  color : green;
+}
+/**
+ * End Tree Reports CSS
+ ********************/
+
+/*
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+*/
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(//fonts.gstatic.com/s/opensans/v10/DXI1ORHCpsQm3Vp6mXoaTXhCUOGz7vYGh680lGh-uXM.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(//fonts.gstatic.com/s/opensans/v10/k3k702ZOKiLJc3WVjuplzHhCUOGz7vYGh680lGh-uXM.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 300;
+  src: local('Open Sans Light Italic'), local('OpenSansLight-Italic'), url(//fonts.gstatic.com/s/opensans/v10/PRmiXeptR36kaC0GEAetxh_xHqYgAV9Bl_ZQbYUxnQU.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Open Sans Italic'), local('OpenSans-Italic'), url(//fonts.gstatic.com/s/opensans/v10/xjAJXh38I15wypJXxuGMBobN6UDyHWBl620a-IRfuBk.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Open Sans Bold Italic'), local('OpenSans-BoldItalic'), url(//fonts.gstatic.com/s/opensans/v10/PRmiXeptR36kaC0GEAetxjqR_3kx9_hJXbbyU8S6IN0.woff) format('woff');
+}
+
+    </style>
+    
+    <script>
+"use strict";
+
+var RPT = (function() {
+    //var CRITERIA_DATA = {};
+    var CRITERIA_SERIALIZED = 'criteria';
+    var REFERENCES_SERIALIZED = 'rptrefs';
+    var SCR_FORM_ACTION = '/report/rptcontrol/run';
+    var RDID = 'rdid';
+    var PRESET = 'preset';
+    
+    function loadReport(rptRefKey, params) {
+        var rptRefs = JSON.parse(document.getElementById(REFERENCES_SERIALIZED).value);
+        var rptRefValue = rptRefs[rptRefKey];
+
+        // TODO destroy cform, if already present
+
+        var cform = document.createElement('form');
+        cform.setAttribute('method', 'post');
+        cform.setAttribute('action', SCR_FORM_ACTION);
+        cform.setAttribute('id','rpt_cform');
+        cform.setAttribute('target','_blank');
+        // create an assoc array to hold cform fields 
+        var cfields = {};
+        //    put in some required fields...
+        cfields[RDID] = rptRefValue;
+        cfields[PRESET] = true;
+        //    add in the embedded critera...
+        var criteria = JSON.parse(document.getElementById(CRITERIA_SERIALIZED).value);
+        for (var key in criteria) {
+            if (criteria.hasOwnProperty(key)) {
+                cfields[key] = criteria[key];
+            }
+        }
+        //    now add in fields from the params, replacing any with the same name from criteria 
+        if (params) {
+            for (var key in params) {
+                if (params.hasOwnProperty(key)) {
+                    cfields[key] = params[key];
+                }
+            }
+        }
+        // create input fields from the collected fields
+        for (var key in cfields) {
+            if (cfields.hasOwnProperty(key)) {
+                var value = cfields[key];
+                if (value instanceof Array) {
+                    for (var i = 0; i < value.length;i++) {
+                        cform.appendChild(createHiddenInput(key, value[i]));
+                    }
+                } else {
+                    cform.appendChild(createHiddenInput(key, value));
+                }
+            }
+        }
+        document.body.appendChild(cform);
+        cform.submit();
+    }
+    //
+    function createHiddenInput(name,value) {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'hidden');
+        input.setAttribute('name',name);
+        input.setAttribute('value',value);
+        return input;
+    }
+    //
+    function showTransaction(transactionId, bucketId) {
+        bucketId = bucketId || '1';
+        window.open('/jsp/agent/queue/transactiondetail.jsf?transId='+transactionId+'&bucketId='+bucketId+'&mode=V','_blank');
+    }
+    //
+    function makeReportData(rptId) {
+        var data = {};
+        data[RDID] = rptId;
+        var criteria = JSON.parse(document.getElementById(CRITERIA_SERIALIZED).value);
+        var criteriaKeys = Object.keys(criteria);
+        for (var i = 0; i < criteriaKeys.length; i++) {
+            var criteriaKey = criteriaKeys[i];
+            data[criteriaKey] = criteria[criteriaKey];
+        }
+        return data;
+    }
+    //
+    return {
+        CRITERIA_SERIALIZED : CRITERIA_SERIALIZED,
+        REFERENCES_SERIALIZED : REFERENCES_SERIALIZED,
+        SCR_FORM_ACTION : SCR_FORM_ACTION,
+        RDID : RDID,
+        PRESET : PRESET,
+        makeReportData : makeReportData,
+        loadReport : loadReport,
+        showTransaction : showTransaction
+    };
+})();
+
+/**
+ * Helper to retrieve report related data from radar through the interceptas report pages.
+ */
+var DATAPIPE = (function() {
+    var OUTPUT_TYPE_KEY = "fmt";
+    var OUTPUT_TYPE_HTML_FRAGMENT = "html_fragment";
+    var OUTPUT_TYPE_JSON = "json";
+    var url = RPT.SCR_FORM_ACTION;
+    /*
+     * Replace innerHTML (and execute inline scripts) into "elementRef" with result of ajax post of "data".
+     *  eg. DATAPIPE.loadFragment({a:1,b:2},document.getElementById('div1'));
+     */
+    function loadFragment(data, elementRef) {
+        if (typeof data !== 'undefined') {
+            data[OUTPUT_TYPE_KEY] = OUTPUT_TYPE_HTML_FRAGMENT;
+            data[RPT.PRESET] = true;
+            jQuery(elementRef).load(url, toPostableJson(data));
+        }
+    }
+    /*
+     * Retrieve result of ajax post of "data". Invokes the function "callback" with the result as argument.
+     *  eg. DATAPIPE.getFragment({a:1,b:2},function(recvd){console.log('recvd:'+recvd);});
+     */
+    function getFragment(data, callback) {
+        if (typeof data !== 'undefined') {
+            data[OUTPUT_TYPE_KEY] = OUTPUT_TYPE_HTML_FRAGMENT;
+            data[RPT.PRESET] = true;
+            jQuery.post(url, toPostableJson(data))
+                  .done(function(recvd) {
+                          if (typeof callback === 'function') {
+                            callback(recvd);
+                          }
+                   })
+                  .fail(function(jqXHR,textStatus,errorThrown) {
+                          if (console) {
+                            console.log('error gettingFragment'+textStatus+','+errorThrown+' for '+data);
+                          }
+                   });
+        }
+    }
+    /*
+     * Retrieve result of ajax post of "data". Expecting result to be valid JSON.
+     * Result is parsed into a javascript literal. Invokes the function "callback" with the result as argument.
+     *  eg. DATAPIPE.getJson({a:1,b:2},function(recvd){console.log('recvd:'+recvd);});
+     */
+    function getJson(data, callback) {
+        if (typeof data !== 'undefined') {
+            data[OUTPUT_TYPE_KEY] = OUTPUT_TYPE_JSON;
+            data[RPT.PRESET] = true;
+            jQuery.post(url, toPostableJson(data))
+                  .done(function(recvd) {
+                          //console.log(recvd);
+                          if (typeof callback === 'function') {
+                            //alert("parsing" + JSON.stringify(JSON.parse(recvd)));
+                            try {
+                              callback(JSON.parse(recvd));
+                            } catch(e) {
+                              if (console) {
+                                console.log('error '+e+' gettingJson for\n'+data+'\ngot '+recvd);
+                              }
+                              callback({'error':recvd});
+                            }
+                          }})
+                  .fail(function(jqXHR,textStatus,errorThrown) {
+                          if(console) {
+                            console.log('error gettingjson '+textStatus+','+errorThrown+' for '+data);
+                          }
+                          });
+        }
+    }
+    /*
+     * 
+     */
+    function toPostableJson(data) {
+        var postableArray = [];
+        var dataKeys = Object.keys(data);
+        for (var i = 0; i < dataKeys.length; i++) {
+            var dataKey = dataKeys[i];
+            var dataValue = data[dataKey];
+            if (Array.isArray(dataValue)) {
+                for (var j = 0; j < dataValue.length; j++) {
+                    postableArray.push(dataKey + '=' + encodeURIComponent(dataValue[j]));
+                }
+            } else {
+                postableArray.push(dataKey + '=' + encodeURIComponent(dataValue));
+            }
+        }
+        return postableArray.join('&');
+    }
+    
+    return {
+        loadFragment : loadFragment,
+        getFragment : getFragment,
+        getJson : getJson,
+        toPostableJson : toPostableJson
+    };
+})();
+
+var MATH = (function() {
+    // returns slope, intercept of the line
+    function leastSquares(xSeries, ySeries) {
+        var reduceSumFunc = function(prev, cur) { return prev + cur; };
+        var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
+        var yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+        var ssXX = xSeries.map(function(d) { return Math.pow(d - xBar, 2); })
+            .reduce(reduceSumFunc);
+        var ssYY = ySeries.map(function(d) { return Math.pow(d - yBar, 2); })
+            .reduce(reduceSumFunc);
+        var ssXY = xSeries.map(function(d, i) { return (d - xBar) * (ySeries[i] - yBar); })
+            .reduce(reduceSumFunc);
+        var slope = ssXY / ssXX;
+        var intercept = yBar - (xBar * slope);
+        //var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+        return [slope, intercept];
+    }
+    //
+    return {
+        leastSquares : leastSquares
+    };
+})();
+
+
+    
+    </script>   
+
+</head>
+  
+ <body>
+ <!-- standard_report_template -->
+  <div class="mainLayout">
+
+    <div class="section">
+      <div class="title1">Transaction Scores Report (Scores By : 100) </div>
+    </div> <!-- section -->
+  
+    <input type="hidden" id="criteria" value="{&quot;vt&quot;:[&quot;5237260000000002021&quot;],&quot;dp_p&quot;:[&quot;d0&quot;],&quot;dp_w&quot;:[&quot;d1&quot;],&quot;h&quot;:[&quot;5237260000000003962&quot;]}">
+  
+    <div class="section">
+      
+
+
+<div class="container rc-container">
+  <div class="row rc-title-row">
+    <div class="col-md-4 rc-title1">Report Criteria</div>
+    <div class="col-md-8 rc-title2"><label class="rc-title-label">Date Period:</label>  <label class="rc-title-value">Feb 17, 2015 12:00:00 AM - </label></div>
+  </div>
+  <hr class="rc-divider">
+  
+    
+      <div class="row rc-criteria-row">
+        <div class="col-md-2"><label class="rc-label">Data Source:</label></div>
+        <div class="col-md-10"><label class="rc-value">Delta</label></div>
+      </div>
+    
+  
+    
+      <div class="row rc-criteria-row">
+        <div class="col-md-2"><label class="rc-label">Data Type:</label></div>
+        <div class="col-md-10"><label class="rc-value">Delta Tickets</label></div>
+      </div>
+    
+  
+    
+  
+</div>
+
+    </div> <!-- section -->
+  
+    <div class="section">
+      <div id="TSR_status_mesg" class="msg"></div>
+    </div> <!-- section -->
+  
+    <div class="section">
+      <div id="main_container">
+        
+
+<style type="text/css">
+
+div#FRAGMENT_TSR  th {
+  color:#64a3a8;
+  font-size:0.9em;
+  border-bottom:1px solid #c0c0c0;
+  text-align:center;
+  padding:4px;
+}
+
+div#FRAGMENT_TSR td {
+  color:#64a3a8;
+  text-align:right;
+}
+
+td.TSR_dtcs0 {
+  padding-right:8px;
+  font-weight:bold;
+}
+td.TSR_dtcs1 {
+  padding-left:8px;
+  text-align:left !important;
+  font-weight:bold;
+}
+
+td.TSR_dtcs8 {
+  font-weight:bold;
+}
+
+td.TSR_dtcs9 {
+  padding-left:8px;
+  background-color:#ffffff;
+  
+}
+
+td#TSR_tt {
+  font-weight:bold;
+  color:#000000 !important;
+  border-top:1px solid #c0c0c0; 
+}
+
+div#FRAGMENT_TSR span.mn,span.mx {
+  color:#000000 !important;
+}
+
+
+div#FRAGMENT_TSR div.bar {
+    float:left;
+    height:12px;
+}
+div#FRAGMENT_TSR div.swatch {
+    width:12px;
+    height:12px;
+    margin:auto;
+}
+div#FRAGMENT_TSR div.rf {
+    background-color:#88BDE6;
+}
+div#FRAGMENT_TSR div.nf {
+    background-color:#FBB258;
+}
+div#FRAGMENT_TSR div.uf {
+    background-color:#90CD97;
+}
+
+
+
+</style>
+
+<div id="FRAGMENT_TSR">
+  <div class="tb1" onclick="TRANSACTION_SCORES_REPORT.loadData()"><span id="TSR_execOn">Feb 17, 2015 3:17:01 PM</span></div>
+  <div class="title2"></div>
+  
+  <div class="section">
+    <div id="TSR_status_mesg" class="msg"></div>
+  </div> <!-- section -->
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>From</th>
+        <th>To</th>
+        <th colspan="2">Resolved Fraud<div class="swatch rf"></div></th>
+        <th colspan="2">Resolved Non-Fraud<div class="swatch nf"></div></th>
+        <th colspan="2">Unresolved<div class="swatch uf"></div></th>
+        <th>Total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="TSR_dataListBody">
+      <!-- dynamic fill -->
+    </tbody>  
+    <tfoot>
+      <tr>
+        <td colspan="8"></td>
+        <td id="TSR_tt">47,800</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+
+<script>
+var TRANSACTION_SCORES_REPORT = (function() {
+    var RPT_ID = '5237260000000000441';
+    var DATA = {"fmt":"JSON","G":{"t":"47800","tf":"47,800"},"V":{"t":{"v":[1,1,1,1,1,1,1,1,1,1,3,5,35,1,119,18,9,37,16,17,13,24,19,17,52,12,12,19,175,25,22,79,77,17,25,82,27,37,85,20,14,30,31,16,33,36,24,31,40,19,14,26,19,13,14,13,12,4,5,4,10,12,56,6,138,28,31,50,27,23,21,24,24,18,40,18,16,26,178,38,22,81,73,43,33,71,33,41,71,21,19,33,52,40,41,46,31,33,37,37,23,29,18,33,16,21,20,18,9,16,21,24,181,40,477,70,64,145,60,59,50,86,92,83,121,90,54,89,561,93,83,230,197,89,103,193,82,132,239,106,80,142,147,95,97,116,81,100,135,72,59,101,55,76,67,35,49,26,44,27,43,60,246,91,641,121,109,198,100,175,98,104,120,102,215,170,87,195,765,310,185,345,265,147,188,237,170,222,383,216,154,289,220,219,228,223,149,189,200,133,169,247,176,198,205,129,201,151,109,141,109,177,319,298,764,203,261,302,187,412,219,190,214,210,290,246,219,659,1128,1021,454,670,480,404,391,485,373,467,666,475,371,580,288,971,462,425,537,351,363,398,364,628,339,1033,541,424,842,429,391,507,337,394,352,459,341,358,432,292,312,303,263,199,180,189,136,184,161,122,131,100,123,101,102,63,75,70,47,47,37,38,32,28,10,16,19,16,6,9,12,6,14,4,10,10,3,3,9,5,4,4,4,11,8,4,6,9,7,8,11,7,3,3,6,5,2,2,1,3,4,3,1,1,3,4,2,1,1,1,3,3,1,1,2,1,1,2,1,1,1,1,1,1,2,2,2,2,1,1,2,1,1,1,1,1,1,2,1,1,3,6,1,1,1,1,1,1,1,1,1,1,3,1,1],"vf":["1","1","1","1","1","1","1","1","1","1","3","5","35","1","119","18","9","37","16","17","13","24","19","17","52","12","12","19","175","25","22","79","77","17","25","82","27","37","85","20","14","30","31","16","33","36","24","31","40","19","14","26","19","13","14","13","12","4","5","4","10","12","56","6","138","28","31","50","27","23","21","24","24","18","40","18","16","26","178","38","22","81","73","43","33","71","33","41","71","21","19","33","52","40","41","46","31","33","37","37","23","29","18","33","16","21","20","18","9","16","21","24","181","40","477","70","64","145","60","59","50","86","92","83","121","90","54","89","561","93","83","230","197","89","103","193","82","132","239","106","80","142","147","95","97","116","81","100","135","72","59","101","55","76","67","35","49","26","44","27","43","60","246","91","641","121","109","198","100","175","98","104","120","102","215","170","87","195","765","310","185","345","265","147","188","237","170","222","383","216","154","289","220","219","228","223","149","189","200","133","169","247","176","198","205","129","201","151","109","141","109","177","319","298","764","203","261","302","187","412","219","190","214","210","290","246","219","659","1,128","1,021","454","670","480","404","391","485","373","467","666","475","371","580","288","971","462","425","537","351","363","398","364","628","339","1,033","541","424","842","429","391","507","337","394","352","459","341","358","432","292","312","303","263","199","180","189","136","184","161","122","131","100","123","101","102","63","75","70","47","47","37","38","32","28","10","16","19","16","6","9","12","6","14","4","10","10","3","3","9","5","4","4","4","11","8","4","6","9","7","8","11","7","3","3","6","5","2","2","1","3","4","3","1","1","3","4","2","1","1","1","3","3","1","1","2","1","1","2","1","1","1","1","1","1","2","2","2","2","1","1","2","1","1","1","1","1","1","2","1","1","3","6","1","1","1","1","1","1","1","1","1","1","3","1","1"],"m":1,"M":1128},"uf":{"v":[1,1,1,1,1,1,1,1,1,1,3,5,35,1,119,18,9,37,16,17,13,24,19,17,52,12,12,19,175,25,22,79,77,17,25,82,27,37,85,20,14,30,31,16,33,36,24,31,40,19,14,26,19,13,14,13,12,4,5,4,10,12,56,6,138,28,31,50,27,23,21,24,24,18,40,18,16,26,178,38,22,81,73,43,33,71,33,41,71,21,19,33,52,40,41,46,31,33,37,37,23,29,18,33,16,21,20,18,9,16,21,24,181,40,477,70,64,145,60,59,50,86,92,83,121,90,54,89,561,93,83,230,197,89,103,193,82,132,239,106,80,142,147,95,97,116,81,100,135,72,59,101,55,76,67,35,49,26,44,27,43,60,246,91,641,121,109,198,100,175,98,104,120,102,215,170,87,195,765,310,185,345,265,147,188,237,170,222,383,216,154,289,220,219,228,223,149,189,200,133,169,247,176,198,205,129,201,151,109,141,109,177,319,298,764,203,261,302,187,412,219,190,214,210,290,246,219,659,1128,1021,454,670,480,404,391,485,373,467,666,475,371,580,288,971,461,425,537,351,363,398,364,628,339,1031,541,424,842,429,391,507,337,394,352,459,341,358,432,292,312,303,262,199,180,189,136,184,161,122,131,100,121,93,59,38,48,48,34,29,27,23,19,23,8,3,1,0,0,0,2,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],"vf":["1","1","1","1","1","1","1","1","1","1","3","5","35","1","119","18","9","37","16","17","13","24","19","17","52","12","12","19","175","25","22","79","77","17","25","82","27","37","85","20","14","30","31","16","33","36","24","31","40","19","14","26","19","13","14","13","12","4","5","4","10","12","56","6","138","28","31","50","27","23","21","24","24","18","40","18","16","26","178","38","22","81","73","43","33","71","33","41","71","21","19","33","52","40","41","46","31","33","37","37","23","29","18","33","16","21","20","18","9","16","21","24","181","40","477","70","64","145","60","59","50","86","92","83","121","90","54","89","561","93","83","230","197","89","103","193","82","132","239","106","80","142","147","95","97","116","81","100","135","72","59","101","55","76","67","35","49","26","44","27","43","60","246","91","641","121","109","198","100","175","98","104","120","102","215","170","87","195","765","310","185","345","265","147","188","237","170","222","383","216","154","289","220","219","228","223","149","189","200","133","169","247","176","198","205","129","201","151","109","141","109","177","319","298","764","203","261","302","187","412","219","190","214","210","290","246","219","659","1,128","1,021","454","670","480","404","391","485","373","467","666","475","371","580","288","971","461","425","537","351","363","398","364","628","339","1,031","541","424","842","429","391","507","337","394","352","459","341","358","432","292","312","303","262","199","180","189","136","184","161","122","131","100","121","93","59","38","48","48","34","29","27","23","19","23","8","3","1","0","0","0","2","0","0","0","0","1","0","1","0","0","0","1","0","0","0","0","0","0","1","0","0","0","1","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0","1","0","0","0","0","0","0","0","1","0","0","0","0"],"m":0,"M":1128},"nf":{"v":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,2,8,43,25,26,22,13,18,10,15,13,5,2,13,18,16,6,9,10,6,14,4,10,9,2,2,9,5,4,3,4,11,8,4,6,9,6,8,11,7,2,3,6,5,2,2,1,3,4,3,1,1,2,4,2,1,1,1,1,3,1,1,2,0,1,1,1,0,1,1,1,1,2,2,2,2,0,0,2,1,1,1,1,0,0,0,0,1,0,6,0,1,1,0,1,0,0,0,0,1,0,0,0],"vf":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0","0","0","0","0","0","2","8","43","25","26","22","13","18","10","15","13","5","2","13","18","16","6","9","10","6","14","4","10","9","2","2","9","5","4","3","4","11","8","4","6","9","6","8","11","7","2","3","6","5","2","2","1","3","4","3","1","1","2","4","2","1","1","1","1","3","1","1","2","0","1","1","1","0","1","1","1","1","2","2","2","2","0","0","2","1","1","1","1","0","0","0","0","1","0","6","0","1","1","0","1","0","0","0","0","1","0","0","0"],"m":0,"M":43},"ss":{"vf":["-31,999","-28,699","-28,299","-27,999","-27,499","-27,299","-27,099","-26,499","-26,299","-26,099","-25,999","-25,799","-25,699","-25,599","-25,499","-25,399","-25,299","-25,199","-25,099","-24,999","-24,899","-24,799","-24,699","-24,599","-24,499","-24,399","-24,299","-24,199","-24,099","-23,999","-23,899","-23,799","-23,699","-23,599","-23,499","-23,399","-23,299","-23,199","-23,099","-22,999","-22,899","-22,799","-22,699","-22,599","-22,499","-22,399","-22,299","-22,199","-22,099","-21,999","-21,899","-21,799","-21,699","-21,599","-21,499","-21,399","-21,299","-21,199","-21,099","-20,999","-20,899","-20,799","-20,699","-20,599","-20,499","-20,399","-20,299","-20,199","-20,099","-19,999","-19,899","-19,799","-19,699","-19,599","-19,499","-19,399","-19,299","-19,199","-19,099","-18,999","-18,899","-18,799","-18,699","-18,599","-18,499","-18,399","-18,299","-18,199","-18,099","-17,999","-17,899","-17,799","-17,699","-17,599","-17,499","-17,399","-17,299","-17,199","-17,099","-16,999","-16,899","-16,799","-16,699","-16,599","-16,499","-16,399","-16,299","-16,199","-16,099","-15,999","-15,899","-15,799","-15,699","-15,599","-15,499","-15,399","-15,299","-15,199","-15,099","-14,999","-14,899","-14,799","-14,699","-14,599","-14,499","-14,399","-14,299","-14,199","-14,099","-13,999","-13,899","-13,799","-13,699","-13,599","-13,499","-13,399","-13,299","-13,199","-13,099","-12,999","-12,899","-12,799","-12,699","-12,599","-12,499","-12,399","-12,299","-12,199","-12,099","-11,999","-11,899","-11,799","-11,699","-11,599","-11,499","-11,399","-11,299","-11,199","-11,099","-10,999","-10,899","-10,799","-10,699","-10,599","-10,499","-10,399","-10,299","-10,199","-10,099","-9,999","-9,899","-9,799","-9,699","-9,599","-9,499","-9,399","-9,299","-9,199","-9,099","-8,999","-8,899","-8,799","-8,699","-8,599","-8,499","-8,399","-8,299","-8,199","-8,099","-7,999","-7,899","-7,799","-7,699","-7,599","-7,499","-7,399","-7,299","-7,199","-7,099","-6,999","-6,899","-6,799","-6,699","-6,599","-6,499","-6,399","-6,299","-6,199","-6,099","-5,999","-5,899","-5,799","-5,699","-5,599","-5,499","-5,399","-5,299","-5,199","-5,099","-4,999","-4,899","-4,799","-4,699","-4,599","-4,499","-4,399","-4,299","-4,199","-4,099","-3,999","-3,899","-3,799","-3,699","-3,599","-3,499","-3,399","-3,299","-3,199","-3,099","-2,999","-2,899","-2,799","-2,699","-2,599","-2,499","-2,399","-2,299","-2,199","-2,099","-1,999","-1,899","-1,799","-1,699","-1,599","-1,499","-1,399","-1,299","-1,199","-1,099","-999","-899","-799","-699","-599","-499","-399","-299","-199","-99","1","101","201","301","401","501","601","701","801","901","1,001","1,101","1,201","1,301","1,401","1,501","1,601","1,701","1,801","1,901","2,001","2,101","2,201","2,301","2,401","2,501","2,601","2,701","2,801","2,901","3,001","3,101","3,201","3,301","3,401","3,501","3,601","3,701","3,801","3,901","4,001","4,101","4,201","4,301","4,401","4,501","4,601","4,701","4,801","4,901","5,001","5,101","5,201","5,301","5,401","5,501","5,601","5,701","5,801","5,901","6,001","6,101","6,201","6,401","6,501","6,601","6,901","7,001","7,101","7,201","7,401","7,501","7,801","7,901","8,001","8,101","8,301","8,701","8,801","8,901","9,001","9,201","9,401","9,601","9,701","10,001","10,101","10,701","10,901","11,001","11,301","11,401","11,501","11,601","11,801","12,001","13,201","13,401","13,801","14,801","15,201","15,701","16,101","16,801","18,501","18,901","22,101","22,301","23,201","23,301","24,001","24,201","24,301","31,101"]},"rf":{"v":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,1,1,1,0,3,0,0,0,0,1,0,1,1,1,0,0,3,1,1],"vf":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0","0","0","0","0","2","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","2","0","0","0","0","1","0","1","0","1","0","0","0","0","0","0","0","0","1","1","0","0","0","0","0","1","1","1","1","0","3","0","0","0","0","1","0","1","1","1","0","0","3","1","1"],"m":0,"M":3},"se":{"vf":["-31,900","-28,600","-28,200","-27,900","-27,400","-27,200","-27,000","-26,400","-26,200","-26,000","-25,900","-25,700","-25,600","-25,500","-25,400","-25,300","-25,200","-25,100","-25,000","-24,900","-24,800","-24,700","-24,600","-24,500","-24,400","-24,300","-24,200","-24,100","-24,000","-23,900","-23,800","-23,700","-23,600","-23,500","-23,400","-23,300","-23,200","-23,100","-23,000","-22,900","-22,800","-22,700","-22,600","-22,500","-22,400","-22,300","-22,200","-22,100","-22,000","-21,900","-21,800","-21,700","-21,600","-21,500","-21,400","-21,300","-21,200","-21,100","-21,000","-20,900","-20,800","-20,700","-20,600","-20,500","-20,400","-20,300","-20,200","-20,100","-20,000","-19,900","-19,800","-19,700","-19,600","-19,500","-19,400","-19,300","-19,200","-19,100","-19,000","-18,900","-18,800","-18,700","-18,600","-18,500","-18,400","-18,300","-18,200","-18,100","-18,000","-17,900","-17,800","-17,700","-17,600","-17,500","-17,400","-17,300","-17,200","-17,100","-17,000","-16,900","-16,800","-16,700","-16,600","-16,500","-16,400","-16,300","-16,200","-16,100","-16,000","-15,900","-15,800","-15,700","-15,600","-15,500","-15,400","-15,300","-15,200","-15,100","-15,000","-14,900","-14,800","-14,700","-14,600","-14,500","-14,400","-14,300","-14,200","-14,100","-14,000","-13,900","-13,800","-13,700","-13,600","-13,500","-13,400","-13,300","-13,200","-13,100","-13,000","-12,900","-12,800","-12,700","-12,600","-12,500","-12,400","-12,300","-12,200","-12,100","-12,000","-11,900","-11,800","-11,700","-11,600","-11,500","-11,400","-11,300","-11,200","-11,100","-11,000","-10,900","-10,800","-10,700","-10,600","-10,500","-10,400","-10,300","-10,200","-10,100","-10,000","-9,900","-9,800","-9,700","-9,600","-9,500","-9,400","-9,300","-9,200","-9,100","-9,000","-8,900","-8,800","-8,700","-8,600","-8,500","-8,400","-8,300","-8,200","-8,100","-8,000","-7,900","-7,800","-7,700","-7,600","-7,500","-7,400","-7,300","-7,200","-7,100","-7,000","-6,900","-6,800","-6,700","-6,600","-6,500","-6,400","-6,300","-6,200","-6,100","-6,000","-5,900","-5,800","-5,700","-5,600","-5,500","-5,400","-5,300","-5,200","-5,100","-5,000","-4,900","-4,800","-4,700","-4,600","-4,500","-4,400","-4,300","-4,200","-4,100","-4,000","-3,900","-3,800","-3,700","-3,600","-3,500","-3,400","-3,300","-3,200","-3,100","-3,000","-2,900","-2,800","-2,700","-2,600","-2,500","-2,400","-2,300","-2,200","-2,100","-2,000","-1,900","-1,800","-1,700","-1,600","-1,500","-1,400","-1,300","-1,200","-1,100","-1,000","-900","-800","-700","-600","-500","-400","-300","-200","-100","0","100","200","300","400","500","600","700","800","900","1,000","1,100","1,200","1,300","1,400","1,500","1,600","1,700","1,800","1,900","2,000","2,100","2,200","2,300","2,400","2,500","2,600","2,700","2,800","2,900","3,000","3,100","3,200","3,300","3,400","3,500","3,600","3,700","3,800","3,900","4,000","4,100","4,200","4,300","4,400","4,500","4,600","4,700","4,800","4,900","5,000","5,100","5,200","5,300","5,400","5,500","5,600","5,700","5,800","5,900","6,000","6,100","6,200","6,300","6,500","6,600","6,700","7,000","7,100","7,200","7,300","7,500","7,600","7,900","8,000","8,100","8,200","8,400","8,800","8,900","9,000","9,100","9,300","9,500","9,700","9,800","10,100","10,200","10,800","11,000","11,100","11,400","11,500","11,600","11,700","11,900","12,100","13,300","13,500","13,900","14,900","15,300","15,800","16,200","16,900","18,600","19,000","22,200","22,400","23,300","23,400","24,100","24,300","24,400","31,200"]}},"execOn":"Feb 17, 2015 3:17:01 PM"};
+    var FID = 'TSR';
+    //
+    function init() {
+        //loadData();
+        render(DATA);
+    }
+    //    
+    function loadData() {
+        var data = RPT.makeReportData(RPT_ID);
+        //alert('made data:' + data + JSON.stringify(data));
+        DATAPIPE.getJson(data, function(result){DATA=result;process()});
+    }
+    //
+    function process() {
+        if (console) {
+            //console.log("DATA is" + DATA + "\n" + JSON.stringify(DATA));
+        }
+        if (DATA.statusMesg) {
+            document.getElementById(FID+'_status_mesg').innerHTML = DATA.statusMesg;
+        } else {
+            render(DATA);
+        }
+    }
+    //
+    function getData() {
+        return DATA;
+    }
+    //
+    function render(data) {
+        //alert('rendering' + JSON.stringify(data));
+        // generate datatable rows
+        document.getElementById(FID+'_execOn').innerHTML = data['execOn'];
+        var dataSize = data['V']['ss']['vf'].length;
+        var datarows = d3.select('#'+FID+'_dataListBody')
+            .selectAll('tr')
+            .data(d3.range(dataSize))
+            .enter()
+            .append('tr')
+            .attr('class', function(d,i){return 'z'+(i%2);})
+            .attr('id',function(d){return FID+'_dr'+d;});
+        datarows.selectAll('tr')
+            .data(d3.range(10))
+            .enter()
+            .append('td')
+            .attr('id',function(d,i,p){return FID+'_dc_'+p+'_'+d;})
+            .attr('class', function(d){return FID+'_dtcs'+d;}); 
+            
+            
+           
+            
+        var html = '';
+        var min = 0;
+        var max = 0;
+        var cv = 0;
+        var mMclass = '';
+        // col0 ss
+        data['V']['ss']['vf'].forEach(function(d,i){
+            html = '<span>' + d + '</span>';
+            document.getElementById(FID+'_dc_'+i+'_0').innerHTML = html;
+        });
+        // col1 se
+        data['V']['se']['vf'].forEach(function(d,i){
+            html = '<span>' + d + '</span>';
+            document.getElementById(FID+'_dc_'+i+'_1').innerHTML = html;
+        });
+        // col2 rf
+        min = data['V']['rf']['m'];
+        max = data['V']['rf']['M'];
+        mMclass = '';
+        data['V']['rf']['vf'].forEach(function(d,i){
+            html = '<span' + setMinMaxStyle(data['V']['rf']['v'][i],min,max) + '>' + d + '</span>';
+            document.getElementById(FID+'_dc_'+i+'_2').innerHTML = html;
+        });
+        // col3 rf g
+        // col4 nf
+        min = data['V']['nf']['m'];
+        max = data['V']['nf']['M'];
+        mMclass = '';
+        data['V']['nf']['vf'].forEach(function(d,i){
+            html = '<span' + setMinMaxStyle(data['V']['nf']['v'][i],min,max) + '>' + d + '</span>';
+            document.getElementById(FID+'_dc_'+i+'_4').innerHTML = html;
+        });
+        // col5 nf g
+        // col6 uf
+        min = data['V']['uf']['m'];
+        max = data['V']['uf']['M'];
+        mMclass = '';
+        data['V']['uf']['vf'].forEach(function(d,i){
+            html = '<span' + setMinMaxStyle(data['V']['uf']['v'][i],min,max) + '>' + d + '</span>';
+            document.getElementById(FID+'_dc_'+i+'_6').innerHTML = html;
+        });
+        // col7 uf g
+        // col8 t
+        min = data['V']['t']['m'];
+        max = data['V']['t']['M'];
+        mMclass = '';
+        data['V']['t']['vf'].forEach(function(d,i){
+            html = '<span' + setMinMaxStyle(data['V']['t']['v'][i],min,max) + '>' + d + '</span>';
+            document.getElementById(FID+'_dc_'+i+'_8').innerHTML = html;
+        });
+        // col9 t g
+        var barScale = d3.scale.linear().range([0, 400]).domain([0,data['V']['t']['M']]); 
+        d3.range(dataSize).forEach(function(i){
+            
+            html = '<div class="bar rf" style="width:' + barScale(data['V']['rf']['v'][i]) + 'px;"></div>';
+            html += '<div class="bar nf" style="width:' + barScale(data['V']['nf']['v'][i]) + 'px;"></div>';
+            html += '<div class="bar uf" style="width:' + barScale(data['V']['uf']['v'][i]) + 'px;"></div>';
+            //html = 'bar' + d;
+            
+            document.getElementById(FID+'_dc_'+i+'_9').innerHTML = html;
+        });          
+        
+        document.getElementById(FID+'_tt').innerHTML = data['G']['tf'];
+    }
+    //
+    function setMinMaxStyle(value, minValue, maxValue) {
+        if (value == minValue) {
+            return ' class="mn"';
+        }
+        if (value === maxValue) {
+            return ' class="mx"';
+        }
+        return '';
+    }
+    //
+    return {
+      init : init,
+      RPT_ID : RPT_ID,
+      getData : getData,
+      loadData : loadData
+    };
+})();
+
+TRANSACTION_SCORES_REPORT.init();
+</script>
+      </div> <!-- main_container -->
+    </div> <!-- section -->  
+    
+    <div class="section">
+      
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 sflabel al">© 2007-2013 Accertify, Inc.</div>
+    <div class="col-md-4 sflabel am">CONFIDENTIAL</div>
+    <div class="col-md-4 sflabel ar">(host admin) Feb 17, 2015 3:16:52 PM</div>
+  </div>
+</div>
+
+    </div> <!-- section -->
+    
+  </div> <!-- mainLayout -->
+  
+</body></html>
