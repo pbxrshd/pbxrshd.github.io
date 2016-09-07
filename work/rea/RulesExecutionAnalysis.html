@@ -1,0 +1,864 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="SHORTCUT ICON" href="/unsecured/images/favicon.ico" type="image/x-icon" />
+
+    <!-- designed to run on interceptas -->
+    <link href="res/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="res/css/font-awesome.min.css" type="text/css" media="all" />
+
+    <style type="text/css">
+          html, body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          font-family: 'Open Sans', sans-serif;
+      }
+      .flexbox-parent {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start; /* align items in Main Axis */
+          align-items: stretch; /* align items in Cross Axis */
+          align-content: stretch; /* Extra space in Cross Axis */
+          background: rgba(255, 255, 255, .1);
+      }
+      .flexbox-item {
+          padding: 8px;
+      }
+      .flexbox-item-grow {
+          flex: 1; /* same as flex: 1 1 auto; */
+      }
+      .flexbox-item.header {
+          /*background: rgba(255, 0, 0, .1);*/
+      }
+      .flexbox-item.footer {
+        display: flex;
+        justify-content: space-around;
+      }
+      .flexbox-item.content {
+
+      }
+      .fill-area-content {
+          /* Needed for when the area gets squished too far and there is content that can't be displayed */
+          overflow: auto;
+      }
+
+      div.status-mesg {
+        font-weight: bold;
+        color: #800000;
+        margin: 0px 16px 0px 16px;
+      }
+
+      div.title-bar {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      div.title-text {
+        margin: 14px 0px 20px 10px;
+        font-size: 26px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      div.title-toolbar {
+
+      }
+      div.status-bar {
+        margin: 0px 16px 4px 16px;
+        display: flex;
+        justify-content: space-between;
+      }
+      div.status-text {
+        color: silver;
+        font-style: italic;
+        font-size: 11px;
+        margin-top: 16px;
+      }
+      div.status-tools {
+        margin-top: 10px;
+      }
+
+      div.criteria-container {
+        background-color: #f2f0f0;
+        border: 1px solid #d9d9d9;
+        margin: 0px 16px 16px 16px;
+      }
+      div.criteria-toolbar {
+        text-align: right;
+        padding: 4px 6px;
+      }
+      div.criteria-content {
+        overflow: hidden;
+      }
+
+      div.criterion {
+          padding: 0px 0px 8px 8px;
+      }
+      div.criterion-label {
+        text-transform: uppercase;
+        display: inline-block;
+        font-weight:bold;
+        font-size: 11px;
+        min-width:24%;
+      }
+      div.criterion-text {
+        display: inline-block;
+        font-size: 11px;
+      }
+
+      div.criteria-footer {
+        display: flex;
+        justify-content: space-around;
+        font-size: 12px;
+      }
+      div.criteria-footer-card {
+        padding:6px;
+      }
+      div.criteria-footer-label {
+        color: #808080;
+        font-style: italic;
+      }
+      div.criteria-footer-value {
+        font-weight: bold;
+      }
+      div.criteria-footer-total-card {
+        padding: 4px;
+      }
+      div.criteria-footer-total-label {
+        color: #808080;
+        font-weight: bold;
+      }
+      div.criteria-footer-total-value {
+        font-weight: bold;
+      }
+
+
+      div#grid1 {
+          height: 100%;
+      }
+
+      .grid-th {
+        font-size: 12px;
+        text-transform: uppercase;
+        border-left: solid 1px #888888;
+        font-weight: normal;
+        background-color: #434040;
+        color: #ffffff;
+        text-align: center;
+      }
+      .grid-th-span {
+        font-size: 12px;
+        text-transform: uppercase;
+        border: solid 1px #434040;
+        font-weight: normal;
+        background-color: #909090;
+        color: #ffffff;
+        text-align: center;
+      }
+      .grid-td {
+        font-size: 11px;
+      }
+      .ar {
+        text-align: right;
+      }
+      .al {
+        text-align: left;
+      }
+      .am {
+        text-align: center;
+      }
+      .white {
+        color:white;
+      }
+      .sflabel {
+        font-size: 0.9em;
+        font-style: italic;
+        color: #6c7477;
+        padding: 24px 0px 0px 0px;
+      }
+
+      .icon {
+        font-family: FontAwesome,'Open Sans', sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        padding: 0px 4px 0px 4px;
+        cursor: pointer;
+        line-height: 1;
+        opacity: 1;
+        display: inline-block;
+        -webkit-font-smoothing: antialiased;
+      }
+      .icon-shade:before {
+        content: "\f150";
+        color: #428bca;
+      }
+      .icon-download:before {
+        content: "\f019";
+        color: #428bca;
+      }
+      .icon-cols:before {
+        content: "\f00a";
+        color: #428bca;
+      }
+      .icon-check {
+        font-size: 20px;
+      }
+      .icon-check:before {
+        content: "\f00c";
+        color: #428bca;
+      }
+      .icon-close:before {
+        content: "\f00d";
+        color: #a9a9a9;
+      }
+
+      div.modal-head {
+        padding: 15px;
+        border-bottom: 1px solid #e5e5e5;
+        display: flex;
+        justify-content: space-between;
+      }
+      div.modal-head-title {
+        color: #434040;
+        font-weight: bold;
+      }
+      div.modal-head-tools {
+
+      }
+      div.modal-card {
+        margin: 0px auto 12px auto;
+        width: 50%;
+        background-color:#434340;
+      }
+
+      #exportsModal label {
+        color: #696969;
+        font-weight: normal;
+      }
+
+    </style>
+
+    <script src="res/js/jquery.min.js"></script>
+    <script src="/res/js/bootstrap.min.js"></script>
+    <script src="/res/js/ag-grid-enterprise.min.js"></script>
+
+    <script>
+    "use strict";
+    var REF = null;
+
+    function init() {
+      if (PAYLOAD) {
+        agGrid.LicenseManager.setLicenseKey(PAYLOAD["aggrid.license.key"]);
+        Format.init(PAYLOAD.localeCode);
+        GRID.init(PAYLOAD);
+        renderGlobals(PAYLOAD);
+        if (PAYLOAD.data.rowdata.length > 0) {
+          GRID.process(document.getElementById("grid1"));
+        }
+        //AID.init("ruleExecutionAnalysis");
+        //AID.process();
+      } else {
+        document.getElementById("status_mesg").innerHTML = "Error loading this page...";
+      }
+    }
+
+    /**
+      Front End Formatter
+      -------------------
+          (the beginnings of) A component for use in locale-aware formatting for client-side rendering.
+          Modelled on the patterns in the back-end java Formatter.
+          Currently only supports numeric and percent formatting.
+      Usage:
+          Format.init("en_US");  // Initialize one time with a locale.
+                                 // if not initialized with a locale, Format will fall back to browser locale.
+          Format.numberFormat(1234);      // "1,234"
+          Format.numberFormat(1234.5678); // "1,234.57"
+          Format.percentFormat(0.012345); // "1.23%"
+    */
+    var Format = (function() {
+
+      var _numberFormat = null;
+      var _percentFormat = null;
+
+      function init(localeCode) {
+        if (typeof localeCode === "string" && localeCode !== "") {
+          localeCode = localeCode.replace("_", "-");
+          _numberFormat = new Intl.NumberFormat(localeCode);
+          // not using Intl percent formatting - issues with controlling rounding
+          //_percentFormat = new Intl.NumberFormat(localeCode,{style:'percent'});
+          _percentFormat = new Intl.NumberFormat(localeCode);
+        } else {
+          _numberFormat = new Intl.NumberFormat();
+          _percentFormat = new Intl.NumberFormat();
+        }
+      }
+      function numberFormat(unformatted) {
+        if (isNumeric(unformatted)) {
+          if (!isInteger(unformatted)) {
+            unformatted = Math.round(unformatted*100)/100; // round to 2 places
+          }
+          return _numberFormat.format(unformatted);
+        }
+        return unformatted;
+      }
+      function percentFormat(unformatted) {
+        if (isNumeric(unformatted)) {
+          return numberFormat(unformatted * 100) + "%";
+        }
+        return "";
+      }
+      function isInteger(value) {
+        return isNumeric(value) && Math.floor(value) === value;
+      }
+      function isNumeric(value) {
+        return !isNaN(parseFloat(value))&&isFinite(value);
+      }
+      //
+      return {
+        init : init,
+        isNumeric : isNumeric,
+        numberFormat : numberFormat,
+        percentFormat : percentFormat
+      }
+    })(); // Format
+
+
+    function renderGlobals(dataset) {
+      document.querySelector(".title-text").innerHTML = dataset.flex.reportTitle;
+      document.title = dataset.flex.reportTitle;
+      if (dataset.flex.statusMesg) {
+        document.getElementById("status_mesg").innerHTML = dataset.flex.statusMesg;
+      }
+      if (dataset.data.rowdata.length > 0) {
+        document.getElementById("criteria_label_fraud").innerHTML = dataset.flex.fraudCount;
+        document.getElementById("criteria_label_nonfraud").innerHTML = dataset.flex.nonFraudCount;
+        document.getElementById("criteria_label_unresolved").innerHTML = dataset.flex.unresolvedCount;
+        document.getElementById("criteria_label_total").innerHTML = dataset.flex.totalTransactionCount;
+        document.getElementById("criteria_label_fraud_rate").innerHTML = dataset.flex.fraudRate;
+        document.getElementById("criteria_value_fraud").innerHTML = Format.numberFormat(dataset.data.summary.f);
+        document.getElementById("criteria_value_nonfraud").innerHTML = Format.numberFormat(dataset.data.summary.nf);
+        document.getElementById("criteria_value_unresolved").innerHTML = Format.numberFormat(dataset.data.summary.u);
+        document.getElementById("criteria_value_total").innerHTML = Format.numberFormat(dataset.data.summary.t);
+        document.getElementById("criteria_value_fraud_rate").innerHTML = Format.percentFormat(dataset.data.summary.f / dataset.data.summary.t);
+        document.querySelector("#exportsModal .modal-head-title").innerHTML = dataset.flex.exportToCsv;
+        document.querySelector("#exportsModal .modal-body label").innerHTML = dataset.flex.exportFileName;
+        document.querySelector("#export_summary_option_label").innerHTML = dataset.flex.exportSummaryOption;
+      }
+      var criteriaContentRef = jQuery("#criteria_content");
+      Object.keys(dataset.criteriaValues).forEach(function(e) {
+        var value = dataset.criteriaValues[e].value;
+        if ("" !== value) {
+          var html = '<div class="criterion"><div class="criterion-label" ' + AID.DATA_AID + '="criteria-' + e + '">' + dataset.criteriaValues[e].label
+                     + '</div><div class="criterion-text">' + value + '</div></div>';
+          criteriaContentRef.append(html);
+        }
+      });
+      document.getElementById("footer_0").innerHTML = dataset.flex.footerCopyright;
+      document.getElementById("footer_1").innerHTML = dataset.flex.confidential;
+      document.getElementById("footer_2").innerHTML = dataset.flex.execByOn;
+    }
+
+
+    var GRID = (function() {
+      var datasetRef = null;
+      var total = 0;
+      var totalFraud = 0;
+      var totalReviewed = 0;
+
+      var ROW_DATA = [];
+      var ICONS = {sortAscending:'<i class="fa fa-sort-down white"/>',
+              sortDescending:'<i class="fa fa-sort-up white"/>',
+              filter:'<i class="fa fa-filter white"/>',
+              menu:'<i class="fa fa-ellipsis-v white"/>'};
+      var COLUMN_DEFS = [
+         {field:"r", headerName:"", fieldValue: "ruleName", filter:"text", headerClass: "grid-th", cellClass: "grid-td", pinned:"left", icons: ICONS},
+         {field:"rid", headerName:"", fieldValue: "ruleId", filter:"text", headerClass: "grid-th", cellClass: "grid-td", hide:true, icons: ICONS},
+         {field:"rs", headerName:"", fieldValue: "ruleset", filter:"text", headerClass: "grid-th", cellClass: "grid-td", icons: ICONS},
+         {field:"rsid", headerName:"", fieldValue: "rulesetId", filter:"text", headerClass: "grid-th", cellClass: "grid-td", hide:true, icons: ICONS},
+         {field:"s", headerName:"", fieldValue: "rulescore", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                 cellRenderer:function(v){return Format.numberFormat(v.value)}, comparator : numericComparator, icons: ICONS},
+         {field:"ms", headerName:"", fieldValue: "medianTransactionScore", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"], hide:true,
+                 cellRenderer:function(v){return Format.numberFormat(v.value)}, comparator : numericComparator, icons: ICONS},
+         {field:"f", headerName:"", fieldValue: "fraudCount", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                 cellRenderer:function(v){return Format.numberFormat(v.value)}, comparator : numericComparator, icons: ICONS},
+         {field:"nf", headerName:"", fieldValue: "nonFraudCount", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                 cellRenderer:function(v){return Format.numberFormat(v.value)}, comparator : numericComparator, icons: ICONS},
+         {field:"rv", headerName:"", fieldValue: "reviewedCount", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                 cellRenderer:function(v){return Format.numberFormat(v.value)}, comparator : numericComparator, icons: ICONS},
+         {field:"u", headerName:"", fieldValue: "unresolvedCount", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                 cellRenderer:function(v){return Format.numberFormat(v.value)}, comparator : numericComparator, icons: ICONS},
+         {field:"t", headerName:"", fieldValue: "total", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                 cellRenderer:function(v){return Format.numberFormat(v.value)}, comparator : numericComparator, icons: ICONS},
+
+         {field:"rr", headerName:"", fieldValue: "relativeRisk", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                 cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS},
+
+         {headerName:"", fieldValue :"reviewed", headerClass: "grid-th-span", children:[
+           {field:"rfr", headerName:"", fieldValue: "fraudRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"], hide:true,
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS},
+           {field:"rnfr", headerName:"", fieldValue: "nonFraudRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"], hide:true,
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS},
+           {field:"rrtr", headerName:"", fieldValue: "ruleTripRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"], hide:true,
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS},
+           {field:"rur", headerName:"", fieldValue: "unresolvedRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"], hide:true,
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS}
+         ]},
+
+         {headerName:"", fieldValue :"total", headerClass: "grid-th-span", children:[
+           {field:"tfr", headerName:"", fieldValue: "fraudRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS},
+           {field:"tnfr", headerName:"", fieldValue: "nonFraudRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS},
+           {field:"trtr", headerName:"", fieldValue: "ruleTripRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS},
+           {field:"tur", headerName:"", fieldValue: "unresolvedRate", filter:"number", headerClass: "grid-th", cellClass: ["grid-td","ar"],
+                   cellRenderer:function(v){return Format.percentFormat(v.value)}, icons: ICONS}
+         ]}
+       ];
+
+      var GRID_OPTIONS = {
+          columnDefs: null,
+          rowData: null,
+          enableSorting: true,
+          enableFilter: true,
+          enableColResize: true,
+          rowHeight: 32,
+          headerHeight: 32,
+          onAfterFilterChanged : filterChangedHandler,
+          toolPanelSuppressRowGroups: true,
+          toolPanelSuppressValues: true,
+          toolPanelSuppressPivots: true,
+          toolPanelSuppressPivotMode: true,
+          getMainMenuItems: function() {return MAIN_MENU_ITEMS},
+          suppressMenuColumnPanel: true,
+          headerCellRenderer: headerCellRenderer
+      };
+
+      var MAIN_MENU_ITEMS = [
+           "autoSizeThis",
+           "autoSizeAll",
+           "resetColumns"
+      ];
+
+      function filterChangedHandler() {
+        var statusText = datasetRef.flex.rowCountTemplate;
+        statusText = statusText.replace("{0}", Format.numberFormat(GRID_OPTIONS.api.getModel().rowsToDisplay.length));
+        statusText = statusText.replace("{1}", Format.numberFormat(Format.numberFormat(ROW_DATA.length)));
+        document.getElementById("status_text").innerHTML = statusText;
+      }
+
+      /*
+        impl of agGrid numericComparator(valueA, valueB, nodeA, nodeB, isInverted)
+      */
+      function numericComparator(valueA, valueB) {
+        return valueA - valueB;
+      }
+
+      function headerCellRenderer(params) {
+        var aidValue = "header-";
+        switch (params.colDef.field) {
+          case "rfr":
+          case "rnfr":
+          case "rrtr":
+          case "rur":
+            aidValue += "reviewed-";
+          break;
+          case "tfr":
+          case "tnfr":
+          case "trtr":
+          case "tur":
+            aidValue += "total-";
+          break;
+          default:
+          break;
+        }
+        aidValue += params.colDef.fieldValue;
+        var html = '<span ' + AID.DATA_AID + '="' + aidValue + '">' + params.colDef.headerName + '</span>';
+        return html;
+      }
+
+      function getMainMenuItems(params) {
+        return [
+            "autoSizeThis",
+            "autoSizeAll",
+            "resetColumns"
+        ];
+      }
+
+      function init(dataset) {
+        datasetRef = dataset;
+        if (datasetRef.data.rowdata.length < 1) {
+          return;
+        }
+        //
+        totalFraud = parseInt(dataset.data.summary.f);
+        total = parseInt(dataset.data.summary.t);
+        totalReviewed = totalFraud + parseInt(dataset.data.summary.nf);
+
+        // setup row data
+        dataset.data.rowdata.forEach(function(d) {
+          var row = {
+            r   : lookup(dataset.data.rules, d.r),
+            rid : d.r,
+            rs  : lookup(dataset.data.rulesets, d.rs),
+            rsid: d.rs,
+            s   : d.s,
+            ms  : d.ms,
+            f   : d.f,
+            nf  : d.nf,
+            rv  : d.rv,
+            u   : d.u,
+            t   : calculate("t", d),
+            rr  : calculate("rr",d),
+            //
+            rfr  : calculate("rfr",d),
+            rnfr : calculate("rnfr",d),
+            rrtr : calculate("rrtr",d),
+            rur  : calculate("rur",d),
+            //
+            tfr  : calculate("tfr",d),
+            tnfr : calculate("tnfr",d),
+            trtr : calculate("trtr",d),
+            tur  : calculate("tur",d)
+          };
+          ROW_DATA.push(row);
+        });
+        // setup column defs
+        COLUMN_DEFS.forEach(function(e) {
+          e.headerName = dataset.flex[e.fieldValue];
+          if (e.children) {
+            e.children.forEach(function(f) {
+              f.headerName = dataset.flex[f.fieldValue];
+            });
+          }
+        });
+        // setup grid options
+        GRID_OPTIONS.rowData = ROW_DATA;
+        GRID_OPTIONS.columnDefs = COLUMN_DEFS;
+        GRID_OPTIONS.onGridReady = function() {
+          setTimeout(function() { // hack per ag-grid, or scrollbars affect the layout
+            redraw();
+            filterChangedHandler(); // to show initial counts
+          }, 10);
+        };
+      }
+
+      function lookup(table, key) {
+        var value = table[key];
+        return ("" === value) ? key : value;
+      }
+
+      function calculate(fieldCode, rowDatum) {
+        var value = null;
+        switch (fieldCode) {
+          case "t":
+            value = parseInt(rowDatum.rv) + parseInt(rowDatum.u);
+          break;
+          case "rr":
+            value = rowDatum.f/totalFraud;
+          break;
+          //
+          case "rfr":
+            value = rowDatum.f/totalReviewed;
+          break;
+          case "rnfr":
+            value = rowDatum.nf/totalReviewed;
+          break;
+          case "rrtr":
+            value = rowDatum.rv/totalReviewed;
+          break;
+          case "rur":
+            value = rowDatum.u/totalReviewed;
+          break;
+          //
+          case "tfr":
+            value = rowDatum.f/total;
+          break;
+          case "tnfr":
+            value = rowDatum.nf/total;
+          break;
+          case "trtr":
+            value = rowDatum.rv/total;
+          break;
+          case "tur":
+            value = rowDatum.u/total;
+          break;
+          default:
+          break;
+        }
+        return value;
+      }
+
+      function redraw() {
+        GRID_OPTIONS.api.sizeColumnsToFit();
+      }
+
+      function process(containerRef) {
+        new agGrid.Grid(containerRef, GRID_OPTIONS);
+      }
+
+      function columnsControl() {
+        GRID_OPTIONS.api.showToolPanel(!GRID_OPTIONS.api.isToolPanelShowing());
+        redraw();
+      }
+
+      function exportsControl() {
+        getExportFileName();
+        jQuery("#exportsModal").modal();
+      }
+
+      function exportsOkClicked() {
+        var exportParams = {
+          processHeaderCallback : processHeaderCallback,
+          processCellCallback : processCellCallback,
+          fileName: getExportFileName()
+        };
+        if (document.getElementById("export_summary_option").checked) {
+          exportParams.customHeader = generateExportCustomHeader();
+        }
+        GRID_OPTIONS.api.exportDataAsCsv(exportParams);
+        jQuery("#exportsModal").modal("hide");
+      }
+
+      /*
+        Generates a custom header in the exported CSV that looks like
+
+        #"Fraud Count","739"
+        #"Non-Fraud Count","284"
+        #"Unresolved Count","11,932"
+        #"Total Transaction Count","12,955"
+      */
+      function generateExportCustomHeader() {
+        var customHeader = "";
+        customHeader += '#"' + datasetRef.flex.fraudCount + '","' + Format.numberFormat(datasetRef.data.summary.f) + '"\n';
+        customHeader += '#"' + datasetRef.flex.nonFraudCount + '","' + Format.numberFormat(datasetRef.data.summary.nf) + '"\n';
+        customHeader += '#"' + datasetRef.flex.unresolvedCount + '","' + Format.numberFormat(datasetRef.data.summary.u) + '"\n';
+        customHeader += '#"' + datasetRef.flex.totalTransactionCount + '","' + Format.numberFormat(datasetRef.data.summary.t) + '"\n';
+        return customHeader;
+      }
+
+      function getExportFileName() {
+        var exportFileName = document.getElementById("export_file_name").value;
+        if (exportFileName.length === 0) {
+          exportFileName = datasetRef.flex.reportTitle + ".csv";
+          document.getElementById("export_file_name").value = exportFileName;
+        }
+        return exportFileName;
+      }
+
+      function processHeaderCallback (params) {
+        var headerName = params.column.getColDef().headerName;
+        var prefix = '';
+        var colId = params.column.colId;
+        switch (colId) {
+          case "rfr":
+          case "rnfr":
+          case "rrtr":
+          case "rur":
+            prefix = datasetRef.flex["reviewed"] + ":";
+          break;
+          case "tfr":
+          case "tnfr":
+          case "trtr":
+          case "tur":
+            prefix = datasetRef.flex["total"] + ":";
+          break;
+          default:
+          break;
+        }
+        return (prefix + headerName).toUpperCase();
+      }
+
+      function processCellCallback(params) {
+        var colId = params.column.colId;
+        var value = null;
+        switch (colId) {
+          case "rr":
+          case "rfr":
+          case "rnfr":
+          case "rrtr":
+          case "rur":
+          case "tfr":
+          case "tnfr":
+          case "trtr":
+          case "tur":
+            value = Format.percentFormat(params.value);
+          break;
+          default:
+            value = params.value;
+          break;
+        }
+        return value;
+      }
+      //
+      return {
+        init : init,
+        process : process,
+        redraw : redraw,
+        columnsControl : columnsControl,
+        exportsControl : exportsControl,
+        exportsOkClicked : exportsOkClicked
+      };
+    })(); // GRID
+
+    /**
+         Integrated Documentation
+        ----------------------------------
+        (see c.a.w.servlet.request.HelpSystemController.getAidData(Map<String, Object>))
+    */
+    var AID = (function() {
+      var DATA_AID = "data-aid";
+      var data = {request:"getAidData", scope:"", fields:""};
+      var OPTIONS_TEMPLATE = {
+              html:false,
+              placement:"auto",
+              container:"body",
+              title:"",
+              delay:{show:1500,hide:750}
+      };
+      //
+      function init(scope) {
+        data.scope = scope;
+      }
+      //
+      function process() {
+        if ("" === data.scope) {
+          if (console) {
+            console.log("AID: invalid scope");
+          }
+          return;
+        }
+        //
+        var fields = [];
+        jQuery("["+DATA_AID+"]").each(function() {
+          fields.push(jQuery(this).attr(DATA_AID));
+        });
+        data.fields = fields.join(",");
+
+        jQuery
+          .post("/ajaxHandler", data)
+          .done(function(jsonResponse) {
+              // response is an object with key:value of data-aid:contentForTooltip
+              Object.keys(jsonResponse).forEach(function(key) {
+                var content = jsonResponse[key];
+                if ("" !== content) { // if we have content for the tooltip
+                   var options = (JSON.parse(JSON.stringify(OPTIONS_TEMPLATE))); // deep-clone an options object from the template
+                   options.title = content; // set the tooltip content
+                   jQuery("[" + DATA_AID + "='" + key + "']").tooltip(options); // and inject the tooltip
+                }
+              });
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+              if (console) {
+                console.log(" Could not process AID, getting data (" + textStatus + ", " + errorThrown + ")");
+              }
+          });
+      }
+      //
+      return {
+        init : init,
+        DATA_AID : DATA_AID,
+        process : process
+      };
+    })(); // AID
+
+</script>
+</head>
+
+ <body>
+<div class="flexbox-parent">
+    <div class="flexbox-item header">
+      <div class="title-bar">
+        <div class="title-text" data-aid="reportTitle"></div>
+        <div class="title-toolbar"></div>
+      </div>
+    </div><!-- .header -->
+
+    <div class="fill-area-content criteria-container">
+      <div class="criteria-toolbar">
+        <a class="icon icon-shade" data-toggle="collapse" data-target="#criteria_content"></a>
+      </div>
+      <div id="criteria_content" class="criteria-content collapse in">
+      </div><!-- #criteria_content -->
+
+      <div class="criteria-footer">
+        <div class="criteria-footer-card">
+          <div class="criteria-footer-label" id="criteria_label_fraud" data-aid="fraudCount"></div>
+          <div class="criteria-footer-value" id="criteria_value_fraud"></div>
+        </div>
+        <div class="criteria-footer-card">
+          <div class="criteria-footer-label" id="criteria_label_nonfraud" data-aid="nonFraudCount"></div>
+          <div class="criteria-footer-value" id="criteria_value_nonfraud"></div>
+        </div>
+        <div class="criteria-footer-card">
+          <div class="criteria-footer-label" id="criteria_label_unresolved" data-aid="unresolvedCount"></div>
+          <div class="criteria-footer-value" id="criteria_value_unresolved"></div>
+        </div>
+        <div class="criteria-footer-total-card">
+          <div class="criteria-footer-total-label" id="criteria_label_total" data-aid="fraudRate"></div>
+          <div class="criteria-footer-total-value" id="criteria_value_total"></div>
+        </div>
+        <div class="criteria-footer-total-card">
+          <div class="criteria-footer-total-label" id="criteria_label_fraud_rate"></div>
+          <div class="criteria-footer-total-value" id="criteria_value_fraud_rate"></div>
+        </div>
+      </div><!-- .criteria-footer -->
+    </div><!-- .criteria-container -->
+
+    <div id="status_mesg" class="status-mesg"></div>
+    <div class="fill-area-content status-bar">
+        <div id="status_text" class="status-text"></div>
+        <div class="status-tools">
+          <span class="icon icon-download" onclick="GRID.exportsControl()" data-aid="downloadIcon"></span>
+          <span class="icon icon-cols" onclick="GRID.columnsControl()" data-aid="columnsIcon"></span>
+        </div>
+    </div><!-- .status-bar -->
+
+    <div class="fill-area-content flexbox-item-grow">
+      <div id="grid1" class="ag-bootstrap"></div>
+    </div>
+
+    <div class="flexbox-item footer">
+          <div class="sflabel am" id="footer_0"></div>
+          <div class="sflabel am" id="footer_1"></div>
+          <div class="sflabel am" id="footer_2"></div>
+    </div><!-- .footer -->
+
+</div><!-- .flexbox-parent -->
+
+<div class="modal fade" id="exportsModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-head">
+        <div class="modal-head-title"></div>
+        <div class="modal-head-tools">
+          <span class="icon icon-check" onclick="GRID.exportsOkClicked(this)"></span>
+          <span class="close icon icon-close" data-dismiss="modal"></span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <label id="export_file_name_label"></label>:<input type="text" class="form-control input-sm" id="export_file_name" />
+        <br />
+        <input type="checkbox" id="export_summary_option" /> <label id="export_summary_option_label"></label>
+      </div>
+    </div>
+  </div>
+</div><!-- #exportsModal -->
+
+<script>
+var PAYLOAD = {"criteriaValues":{"h":{"label":"Data Source","value":" Production"},"vt":{"label":"Data Type","value":" Orders"},"dateperiod":{"label":"Date Period","value":"Sep 7, 2016 12:00:00 AM - "},"r":{"label":"Rule Name","value":""},"rs":{"label":"Rule Set","value":""}},"localeCode":"en_US","data":{"summary":{"t":3669,"f":182,"nf":110,"u":3377},"rules":{"5237260000000125130":" Session ID is Missing","5237260000000433398":"Ship to AO Flag \u003d Y","5237260000000220401":" Policy Score Less Than -15","5237260000000165061":"Agent Pickup CCR Entry Type","5237260000000539873":" Email Addresses","5237260000000737513":"","5237260000000141521":"Common Military Country Code","5237260000000291054":"DSKU  Policy Score Less Than -15","5237260000000568553":" Index Score LT Negative 9","5237260000000202965":" Mobile - GT 3 Orders at Billto (3 Months)","5237260000000659693":"AQM 2B SFS -- SDF Avail Code 129 with Store Ship Node","5237260000000202967":"Order Contains MOBILEPLAN Line II","5237260000000659694":"AQM 2C SFS -- SDF Avail Code 290 with Store Ship Node","5237260000000202966":" Mobile - GT 3 Orders at Shipto (3 Months)","5237260000000291048":"DSKU SVC Payment Applied","5237260000000122081":"Negative Billing Email Domain Warm","5237260000000684253":" GBM Model Skip Transactions Review","5237260000000141541":"Military Shipto State","5237260000000223451":"Negative Marked For Email Domain Warm","5237260000000371904":"EOS Mercury Order","5237260000000758978":"","5237260000000122101":"Negative Billing Phone Warm","5237260000000122102":"Negative IP Country Code Warm","5237260000000122103":"Negative Loyalty ID Warm","5237260000000539853":" Profile Service","5237260000000639153":"SVC Payment Applied - For SVC Fraud Trend","5237260000000008322":"IP Address Equals Proxy","5237260000000136323":"Threat True Geo Non-US / Quova \u003d US","5237260000000225464":"Traditional INSTORE Positive AVS","5237260000000309415":"Chargeback Billing Phone","5237260000000308389":"Billto Name and Ship State Negative Lookup","5237260000000581793":"Different ShipToHome Addresses","5237260000000309410":"Chargeback Marked For Email","5237260000000560294":"3DS ECI Equals 07","5237260000000309409":"Chargeback Customer Email","5237260000000560293":"3DS ECI Equals 05 or 06","5237260000000766120":"","5237260000000309408":"Chargeback Delivery Email","5237260000000766119":"","5237260000000766116":"","5237260000000116884":" Session ID is Missing","5237260000000766114":"","5237260000000766115":"","5237260000000766112":"","5237260000000136343":" True IP Not Equal To IP Address","5237260000000727214":"TREND High Dollar CUA - F\u0026F Version","5237260000000766111":"","5237260000000766108":"","5237260000000766109":"","5237260000000766106":"","5237260000000766107":"","5237260000000303249":"Number of Delivery Emails - Email Profile - GT 3","5237260000000730263":"Prepaid Mobile Shipto Velocity - GT 3 Ords in 24 Hrs","5237260000000766104":"","5237260000000766105":"","5237260000000686233":" CC Type Service 3","5237260000000766102":"","5237260000000766103":"","5237260000000303261":"Number of Delivery Emails - Email Profile - GT 5","5237260000000766100":"","5237260000000309404":"Chargeback Shipping Phone","5237260000000766101":"","5237260000000303259":"Number of Credit Cards – Device - GT 5","5237260000000309403":"Chargeback TM True IP","5237260000000766099":"","5237260000000303257":"Number of Billing Address - Email Profile - GT 5","5237260000000303256":"Number of Device IDs - ATG Profile - GT 3","5237260000000600195":"Order Contains SUB SW PRODUCT","5237260000000116921":" Device ID is Blank","5237260000000402565":"TREND Video Game Auction Fraud I 20 FEB 2014","5237260000000303247":"Number of Credit Cards – Device - GT 3","5237260000000139441":"Agent Pickup Distance and ProdRisk Criteria","5237260000000400526":"AVS U or G","5237260000000628874":"Order Greater Than 9 Lines","5237260000000303244":"Number of Billing Address - Email Profile - GT 3","5237260000000736394":"","5237260000000303243":"Number of Device IDs - ATG Profile - GT 1","5237260000000736396":"","5237260000000206921":"Agent Pickup Order Total GT $999","5237260000000759934":"","5237260000000134221":"Order Total 5000","5237260000000139341":"Agent Pickup ISPU Line GT $99","5237260000000139342":"Agent Pickup ISPU Line GT $199","5237260000000139343":"Agent Pickup ISPU Line GT $299","5237260000000396412":"Elite or Elite Plus Customer","5237260000000679033":"Intl BIN with MobileWeb Instore \u0026 Prod Risk 9","5237260000000704634":"AVS Y B/S NOT Same","5237260000000303213":"Number of Delivery Emails - Email Profile - GT 1","5237260000000303212":"Number of Credit Cards – Device - GT 1","5237260000000303210":"Number of Billing Address - Email Profile - GT 1","5237260000000239720":"Positive Remix CAPI APIKEY","5237260000000668753":"MISC POSA GC purchased with SVC","5237260000000693334":"GT 1 purchase with same Shipto in 10 days - INTRASTATE (updated)","5237260000000759897":"","5237260000000419933":"TREND AVS U GT $1000 Order Prod Risk 9 25 APR 2014","5237260000000693337":"GT 4 purchases with same Payment Card in 20 days (updated)","5237260000000693338":"GT 12 purchases with same Payment Card in 36 hours (updated)","5237260000000693341":"Agent Pickup Name Velocity (3 in 5 days) (updated)","5237260000000693340":"LID velocity (15x in 4 days) (updated)","5237260000000139366":"Agent Pickup Device ID Velocity (GT 3/wk)","5237260000000766032":"","5237260000000766030":"","5237260000000766031":"","5237260000000441415":"SPU and MobileWeb Entry Type","5237260000000766028":"","5237260000000766029":"","5237260000000759882":"","5237260000000766026":"","5237260000000766027":"","5237260000000759880":"","5237260000000759881":"","5237260000000759878":"","5237260000000759879":"","5237260000000759874":"","5237260000000759873":"","5237260000000202761":"Auction SKU","5237260000000362544":"Shipping Phone Number is Freight Forwarder","5237260000000399396":"High Risk BIN Country","5237260000000444454":"ATG LT 1 Day Old (Guest Checkout) 8 JULY 2014","5237260000000275491":"DSKU Negative IP Address Warm","5237260000000138261":"IP Connection Type equals Mobile","5237260000000107561":"Negative  Customer ID Hot","5237260000000122921":"Low Risk IP\u003d EDU/.GOV/.MIL","5237260000000239636":"B/S Same with Order Total LT $250","5237260000000275487":"DSKU IP Address Neg Hot Share","5237260000000298013":"Compromised Account ATGs (Physical)","5237260000000139302":"Agent Pickup Order Total GT $499","5237260000000624653":"Negative Shipping Address Line1-City-State Hot","5237260000000697359":"Billing Address Same as Shipping Address","5237260000000768504":"","5237260000000755193":"","5237260000000768502":"","5237260000000136641":"IntraState Reshipper Characteristics","5237260000000442876":"3DS CAVV TRANS ID is Not Blank","5237260000000768500":"","5237260000000768501":"","5237260000000667133":"Same ATG GT 5 Orders in 24hrs","5237260000000442875":"3DS CAVV RES is Not Blank","5237260000000667134":"Same CC GT 5 Orders in 24hrs","5237260000000442874":"3DS CAVV AUTH VER is Not Blank","5237260000000145881":"SVC for SVC Order","5237260000000648673":" GBM Model 08-2015","5237260000000760300":"","5237260000000760301":"","5237260000000488936":"Bill/Ship Different RWS Name/Address Info Matches","5237260000000599533":"TREND Trad SPU + STH Positive Offset Skip 28 MAY 2015","5237260000000239063":"DSKU Email Velocity (3x in 8hrs)","5237260000000745951":"","5237260000000327124":"Single Line Deal of the Day Order 20 May 2013","5237260000000145901":"SVC Payment Applied","5237260000000239069":"DSKU SKU\\Email Velocity - 2x in 48hrs","5237260000000239066":"DSKU SKU/Email Velocity - GT 2 in 24hrs","5237260000000233923":"DSKU Billto Velocity (2x in 3min)","5237260000000716235":"Order has Friends and Family Pickup Modification","5237260000000716234":"Order Has OLS or OMS Modification","5237260000000764357":"","5237260000000512433":"TREND Auction Fraud With Dummy SKU 8 JAN 2015","5237260000000117121":"","5237260000000607673":"Billing Address NE Ship To Addr 1 For SHIPTOHOME","5237260000000678335":" Service 3 Cancellation Notification","5237260000000617894":"Order Total GT $50 w/Hotshared IP \u0026 CC + ATG1wk","5237260000000735661":"","5237260000000661933":"Same Email with Diff Billing Address GT 2 Times in 48 hrs","5237260000000735663":"","5237260000000735662":"","5237260000000638353":"F\u0026F Order Score 30000+","5237260000000139681":"Positive IP Regional Org","5237260000000232863":" Smart ID Warm","5237260000000256390":"Same Subclass and Customer Email GT 1 - Mobile Prepaid Only","5237260000000758153":"","5237260000000734603":"","5237260000000579953":"DSKU Order with Hot Share IP","5237260000000125261":"IP Country is Nigeria ","5237260000000256379":"Order Update Skip Rule","5237260000000403833":"ATG LT 1 Day Old (New LID) 27 FEB 2014","5237260000000576893":"Payment Type is  Pay","5237260000000683361":" GBM Model Probability Low","5237260000000683363":" GBM Model Distance IP Zip to Shipping Zip GT 0 and Probability Low","5237260000000731491":"Prepaid Mobile Email Velocity - GT 3 Ords in 24 Hrs","5237260000000683365":" GBM Probability High","5237260000000136541":"Order Value GT 450 for INSTORE LOS w/Distance Criteria","5237260000000418153":"Order Product Risk is 9","5237260000000418155":"Order Product Risk is 1","5237260000000418154":"Order Product Risk is 5","5237260000000137581":"USFIO order","5237260000000638293":"Low Dollar STH AVS Y B/S Same","5237260000000683357":" GBM Model LOS Indicator missing \u0026 Short Distance IP Zip to Shipping Zip and Probability Low","5237260000000683356":" GBM Model LOS Indicator missing and GBM Probability Low","5237260000000763216":"","5237260000000683358":" GBM Model LOS Indicator missing GBM Probability High","5237260000000155001":"Preorder Flag \u003d Y","5237260000000462153":"EB Verifies B/S Same STH","5237260000000701773":" Email GT 265 Days Old","5237260000000125303":" Device ID Hot","5237260000000678193":" Trans is Fraud","5237260000000117001":"Update  Event Type","5237260000000117002":"Update  Service Type","5237260000000122122":"Negative Shipping Address Warm","5237260000000122123":"Negative Shipping Name Warm","5237260000000270645":"DSKU iTunes plus dummy SKU","5237260000000122124":"Shipping Phone Negative Warm","5237260000000734516":"","5237260000000692537":"US order with AVS Y and LRI plus IP to B/A LT 50","5237260000000707873":"TREND Cox.net EMD High Dollar New ATG II JAN 12 2016","5237260000000462113":"Billto and Shipto Name and Address Match RWS","5237260000000122141":"Negative Billing Address Warm","5237260000000122143":"Negative IP Address Warm","5237260000000466196":"Greater Than 5 Spaces in the Shipping Address 2","5237260000000466193":"Greater Than 5 Spaces in the Billing Address","5237260000000107821":"Negative Customer Email Address Review - Hot","5237260000000466195":"Greater Than 5 Spaces in the Shipping Address","5237260000000466194":"Greater Than 5 Spaces in the Billing Address 2","5237260000000632093":"Contains DSKU Line","5237260000000107825":"Order Value GT 1000 for GROUND LOS","5237260000000539915":" Email between 7 and 15 days old","5237260000000761095":"","5237260000000107827":"Order Value GT 1000 for NEXT DAY LOS","5237260000000539913":" Email less than 3 days old","5237260000000107829":"Order Value GT 1000 for SECOND DAY LOS","5237260000000539916":" Email between 15 and 30 days old","5237260000000107831":"Order Value GT 1000 for INSTORE LOS","5237260000000630513":"TREND SVC STH $200+ High Risk Ship State 1 - 23 JUL 2015","5237260000000203463":"Store Address (Mobile Order)","5237260000000525053":"Order Contains DSKU Detail (Freight Forwarder Skip)","5237260000000675553":"Credit Card Names \u003d 2","5237260000000765669":"","5237260000000148181":"Auction Triangulation Criteria","5237260000000138967":"Agent Pickup Flag \u003d Y","5237260000000456402":"Same CC with GT 1 Email in a Year","5237260000000686813":"Address Manipulation with New ATG","5237260000000144101":"Order Value LT 100 for INSTORE LOS","5237260000000363225":"Enterprise Code Equals RETAIL","5237260000000441048":"EB Trad SPU Verifies Billing Info","5237260000000765635":"","5237260000000624306":"Assign to AQM Group - Delivery","5237260000000624307":"Assign to AQM Group - SDF/MKTP","5237260000000187021":"Negative Shipping Address Warm Detail","5237260000000624308":"Assign to AQM Group - Default/Missed","5237260000000625333":"Freight Forwarder Shipto Full Address","5237260000000107142":"Middle of the Night Order","5237260000000171654":"Order Contains MOBILEPLAN Line","5237260000000398011":"Order Total LT 200 (Elite/Elite Plus)","5237260000000139931":"Negative Marked For Email Warm","5237260000000139932":"Negative Marked For Email Hot","5237260000000624293":"Assign to AQM Group - Remix API","5237260000000624294":"Assign to AQM Group - SFS","5237260000000624295":"Assign to AQM Group - SPU","5237260000000485034":"Order Contains Haulaway and Recycling","5237260000000624296":"Assign to AQM Group - DSKU","5237260000000624297":"Assign to AQM Group - RDC 11:00am Cutoff","5237260000000624298":"Assign to AQM Group - RDC 1:00pm Cutoff","5237260000000624299":"Assign to AQM Group - RDC 1:30pm Cutoff","5237260000000222891":" Policy Score Less Than -100","5237260000000624301":"Assign to AQM Group - RDC 3:00pm Cutoff","5237260000000624302":"Assign to AQM Group - RDC 4:00pm Cutoff","5237260000000329384":"Top KF/FN Sku of the Week","5237260000000624303":"Assign to AQM Group - RDC 6:00pm Cutoff","5237260000000257684":"Create Subclass Customer Email","5237260000000491153":"High Risk Sale SKU 21 NOV 2014","5237260000000423571":"IP and Bill Distance LT 25 Miles (Prod Risk 1)","5237260000000169646":"Common GH/NG Email Handle","5237260000000167601":"ATG GT 3 Months Old  - LT 12 Ords (6 mths)","5237260000000456333":"HR  Subclass","5237260000000147121":"Distance Between IP and Shipping ZIP LT to Billing ZIP","5237260000000306827":"CAPI Negative Address","5237260000000308875":"Special Characters Bad Words Check","5237260000000657036":"TREND Low Dollar Trad SPU + Hotshare IP + HR Attributes SEPT 15 2015","5237260000000760444":"","5237260000000590455":"3DS ECI Equals 01 or 02","5237260000000590454":"3DS ECI Equals 00","5237260000000483957":"Discover Match w Standardize Rule","5237260000000436863":"CC Bin Country Equals IP Country","5237260000000436862":"Intl CC - NO KEMPWOOD","5237260000000715345":"TREND Cox.net EMD High Dollar New ATG I JAN 12 2016","5237260000000222800":" Policy Score GT 20","5237260000000135800":"B/S ZIP Distance GT 50 Miles - Single Line Item","5237260000000107129":"Distance between Billing Zip and IP Zip GT 500 Miles","5237260000000202362":"Agent Velocity - Marked For Name and State (3 in 7 Days)","5237260000000222798":" Policy Score GT 5","5237260000000222799":" Policy Score GT 10","5237260000000441935":"Bill State/Ship State/IP State All Different","5237260000000458319":" Policy Score Less Than -50","5237260000000222797":" Policy Score Less Than -30","5237260000000107126":"Distance between Billing Zip and IP Zip GT 150 Miles","5237260000000229943":"Order Total LT $100","5237260000000737853":"","5237260000000236094":" Policy Score GT 40","5237260000000693793":"Known Reseller CC","5237260000000693795":"Known Reseller LID","5237260000000693794":"Known Reseller Email","5237260000000323107":"Low Risk F\u0026F Store Location","5237260000000323105":"High Risk F\u0026F Store Location","5237260000000384547":"Order Contains STH Line (Detail)","5237260000000246292":"DSKU IP Country NOT EQUAL US","5237260000000711193":"Email Handle Begins with Number","5237260000000667137":"Same DeviceID GT 5 Orders in 24hrs","5237260000000754186":"","5237260000000754185":"","5237260000000298511":"Line Type Equals MOBILEPLAN 3","5237260000000667144":"Same CC GT 15 Orders in 7 days","5237260000000395789":"TREND Auction Triangulation AVS N 15 NOV 2013","5237260000000255497":"GT 5 of the same SKU Ordered in 240 Days","5237260000000136133":" Policy Score Less Than -10","5237260000000492514":"IP Country and BIN Country \u003d US with Intl AVS Result","5237260000000764910":"","5237260000000393190":"Billing Full Name and Full Address Gamer (Non Mobile)","5237260000000492513":"International AVS Result","5237260000000107485":"Negative Shipping Email Hot","5237260000000644073":"High Risk Trad SPU Store Location","5237260000000644074":"Low Risk Trad SPU Store Location","5237260000000764899":"","5237260000000287720":"EDOL Employee Indicator","5237260000000711633":"Marked for Email Handle Begins with Number","5237260000000107501":"Positive Customer","5237260000000139246":"Low Risk Military Bill/Ship","5237260000000151534":"Loyalty ID and 5 to 12 MD Orders","5237260000000222161":"IP Address Neg Hot Share","5237260000000151521":"Negative IP Carrier Code (warm)","5237260000000167905":"Order Value GT 1850 for INSTORE LOS","5237260000000136161":"IP Domain Carrier \u003d ","5237260000000167904":"Order Value GT 1450 for INSTORE LOS","5237260000000239578":"Positive IP Domain Level 1","5237260000000663493":"Assign to AQM Group - Same Day","5237260000000167921":"ATG GT 3 Months Old","5237260000000692168":"Old LID and LT $500","5237260000000492493":"High Risk Reseller SKU","5237260000000764862":"","5237260000000686000":"TREND AVS Z B/S Same with HRI \u0026 New ATG","5237260000000136074":"GT 1 purchase with same Shipping Address Diff Order Number in 90 minutes","5237260000000240562":"Heavy RewardZone Redemption","5237260000000222142":"CC Neg Hot Share","5237260000000300991":"Line Overall Total Greater Than 1200","5237260000000371644":"Compromised Account ATGs II","5237260000000300989":"Order Total Greater Than 2000","5237260000000404415":" Service Rule","5237260000000136068":"GT 1 purchase with same Billing Address Diff Order Number in 90 minutes","5237260000000118681":"Negative Gift Card","5237260000000107421":"Negative IP Address Hot","5237260000000107422":"Negative Login ID","5237260000000759719":"","5237260000000186262":"Negative TM Device ID -- CB History","5237260000000222121":"Billing Email Neg Hot Share ","5237260000000745374":"","5237260000000768918":"","5237260000000768917":"","5237260000000226202":"Freight Forwarder Shipto Reject","5237260000000136121":"Positive IP Domain Level 2","5237260000000649094":" GBM Model Probability EntryType Not EQ KIOSK or RemixAPI","5237260000000189361":"Negative Marked For and State - Warm","5237260000000734089":"","5237260000000649098":" model exclusion rule tripped - skip GBM decisioning","5237260000000235401":"ATG less than a week old","5237260000000764795":"","5237260000000242556":"Auction Distance IP-Zip to S-Zip GT 90 Miles","5237260000000309116":"Line Type Header DSKU","5237260000000326524":"Deal of the Day SKU 20 May 2013","5237260000000242554":"Auction Distance B-Zip to S-Zip GT 100 Miles","5237260000000396155":"Email Domain is Outlook","5237260000000306023":"Number of Device IDs - ATG Profile - GT 5","5237260000000607075":" Order","5237260000000726894":"Credit Card Payments \u003d 2","5237260000000135021":"Service Plan Line","5237260000000140141":"Negative Payment Card Warm","5237260000000306001":" Mobile HR Prepaid Subclass","5237260000000761688":"","5237260000000716634":"Potential High Dollar CUA","5237260000000274244":" DSKU  Policy Score Less Than -30","5237260000000666434":"Trad SPU Highest Risk SKUs at HR Store Location","5237260000000187261":"Negative TM Browser Language","5237260000000164722":"Negative  True IP Country - HOT","5237260000000673613":"F\u0026F High Risk SKUs for HR Stores","5237260000000305994":"Bridge2Solutions API Key  (Chase)","5237260000000441137":"Entry Type is MobileWeb","5237260000000643895":"AQM SFS Rule (Null Ship Node)","5237260000000193281":"Agent Pickup Last Name EQUALS Billto Last Name","5237260000000581433":"Bill State/Ship State/IP State All the Same","5237260000000166681":"Tax Exempt Lines","5237260000000619296":"TREND BIN\u003dAU + RISK\u003d9 + ATG1wk + SPU 30 Jun 2015","5237260000000760622":"","5237260000000433956":" Order - Order Num Ending In 0-4","5237260000000643874":"AQM SFS Rule","5237260000000367404":" ISPU Order","5237260000000107281":"Overridden Shipping Address","5237260000000107282":"Billing Address Overridden","5237260000000147241":"Negative BIN Range","5237260000000137007":"Negative TM True IP Address Hot","5237260000000133921":"Positive IP Carrier","5237260000000450308":"iTunes Physical Card Order","5237260000000299778":" Data Match and Score Service Rule","5237260000000299777":" CC Type","5237260000000299776":"Update  Service Type","5237260000000137008":"Negative TM True IP Address Warm","5237260000000344846":"Traditional ISPU Order Total LT $400"},"rulesets":{"5237260000004193098":"Physical - Nested (B) - FF -  Mobile Rules","5237260000005543911":"","5237260000004193099":"Physical - Nested (C) - FF - CAPI Rules","5237260000005289625":"Advanced Queue Manager","5237260000004307563":"Physical - Nested (F) - FF - Fraud Trend Rules","5237260000004193100":"Physical - Nested (E) - FF - INTL Rules","5237260000004193101":"Physical - Nested (D) - FF - Friends and Family Rules","5237260000005602467":"","5237260000001514356":" Prod Orders Resolution Ruleset","5237260000005583190":"","5237260000005589845":"","5237260000004095007":"Physical - Nested - Profile Builder Rules","5237260000003740720":"Mobile Prepaid Ruleset","5237260000002018613":" Full Fraud ICNow Ruleset (2011 Active)","5237260000005410051":"  Cancellation Nested Ruleset","5237260000004131094":"  Verification Call","5237260000004193079":"Physical - Nested (A) - FF - Reseller Rules","5237260000004114128":"Mobile IPhone Ruleset","5237260000003459001":" Negative Lists Nested (Original)","5237260000004789933":"Nested - Discover Match Service"},"rowdata":[{"r":"5237260000000135800","rs":"5237260000002018613","s":"750","ms":"4662","rv":"26","f":"17","nf":"9","u":"27"},{"r":"5237260000000222800","rs":"5237260000002018613","s":"-10000","ms":"-92181","rv":"19","f":"12","nf":"7","u":"502"},{"r":"5237260000000686000","rs":"5237260000004307563","s":"1","ms":"-15487","rv":"0","f":"0","nf":"0","u":"5"},{"r":"5237260000000760300","rs":"5237260000004307563","s":"16000","ms":"-2237","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000766100","rs":"5237260000005602467","s":"10000","ms":"-5737","rv":"21","f":"8","nf":"13","u":"49"},{"r":"5237260000000768500","rs":"5237260000005602467","s":"40000","ms":"41064.5","rv":"5","f":"2","nf":"3","u":"1"},{"r":"5237260000000008322","rs":"5237260000002018613","s":"1000","ms":"6389.5","rv":"11","f":"6","nf":"5","u":"11"},{"r":"5237260000000107126","rs":"5237260000002018613","s":"750","ms":"-57289","rv":"28","f":"16","nf":"12","u":"167"},{"r":"5237260000000107129","rs":"5237260000002018613","s":"1250","ms":"-28191","rv":"71","f":"53","nf":"18","u":"206"},{"r":"5237260000000107142","rs":"5237260000002018613","s":"400","ms":"-75436.5","rv":"115","f":"80","nf":"35","u":"1461"},{"r":"5237260000000107281","rs":"5237260000002018613","s":"1","ms":"-56403","rv":"20","f":"15","nf":"5","u":"132"},{"r":"5237260000000107282","rs":"5237260000002018613","s":"1","ms":"-62583.5","rv":"23","f":"21","nf":"2","u":"107"},{"r":"5237260000000107421","rs":"5237260000003459001","s":"70000","ms":"172510","rv":"5","f":"5","nf":"0","u":"0"},{"r":"5237260000000107422","rs":"5237260000003459001","s":"70000","ms":"302317","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000107485","rs":"5237260000003459001","s":"70000","ms":"302317","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000107501","rs":"5237260000002018613","s":"-1500","ms":"-124859","rv":"0","f":"0","nf":"0","u":"70"},{"r":"5237260000000107561","rs":"5237260000002018613","s":"75000","ms":"87738.5","rv":"3","f":"3","nf":"0","u":"1"},{"r":"5237260000000107821","rs":"5237260000003459001","s":"70000","ms":"302317","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000107825","rs":"5237260000002018613","s":"250","ms":"-53839","rv":"5","f":"2","nf":"3","u":"82"},{"r":"5237260000000107827","rs":"5237260000002018613","s":"1000","ms":"25213","rv":"10","f":"8","nf":"2","u":"6"},{"r":"5237260000000107829","rs":"5237260000002018613","s":"500","ms":"-19336","rv":"21","f":"7","nf":"14","u":"46"},{"r":"5237260000000107831","rs":"5237260000002018613","s":"350","ms":"-26734","rv":"5","f":"1","nf":"4","u":"37"},{"r":"5237260000000116884","rs":"5237260000002018613","s":"1","ms":"-39487","rv":"3","f":"1","nf":"2","u":"32"},{"r":"5237260000000116921","rs":"5237260000002018613","s":"1","ms":"-39189","rv":"83","f":"48","nf":"35","u":"622"},{"r":"5237260000000117001","rs":"5237260000002018613","s":"1","ms":"-69437","rv":"287","f":"180","nf":"107","u":"3506"},{"r":"5237260000000117002","rs":"5237260000002018613","s":"1","ms":"-69437","rv":"287","f":"180","nf":"107","u":"3506"},{"r":"5237260000000117121","rs":"5237260000002018613","s":"1","ms":"-69783","rv":"283","f":"178","nf":"105","u":"3447"},{"r":"5237260000000118681","rs":"5237260000003459001","s":"70000","ms":"27867","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000122081","rs":"5237260000003459001","s":"10000","ms":"312","rv":"8","f":"7","nf":"1","u":"9"},{"r":"5237260000000122101","rs":"5237260000003459001","s":"10000","ms":"54216","rv":"5","f":"4","nf":"1","u":"3"},{"r":"5237260000000122102","rs":"5237260000002018613","s":"5000","ms":"10614","rv":"2","f":"2","nf":"0","u":"3"},{"r":"5237260000000122103","rs":"5237260000002018613","s":"5000","ms":"-25758.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000122122","rs":"5237260000003459001","s":"50000","ms":"71335.5","rv":"11","f":"11","nf":"0","u":"1"},{"r":"5237260000000122123","rs":"5237260000003459001","s":"10000","ms":"-61933","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000122124","rs":"5237260000003459001","s":"10000","ms":"136435","rv":"5","f":"4","nf":"1","u":"1"},{"r":"5237260000000122141","rs":"5237260000003459001","s":"2000","ms":"46787.5","rv":"8","f":"8","nf":"0","u":"4"},{"r":"5237260000000122143","rs":"5237260000003459001","s":"2500","ms":"-31330","rv":"3","f":"3","nf":"0","u":"10"},{"r":"5237260000000122921","rs":"5237260000002018613","s":"-3000","ms":"-90086","rv":"0","f":"0","nf":"0","u":"14"},{"r":"5237260000000125130","rs":"5237260000002018613","s":"1","ms":"-39487","rv":"2","f":"1","nf":"1","u":"23"},{"r":"5237260000000125261","rs":"5237260000002018613","s":"75000","ms":"209311","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000125303","rs":"5237260000002018613","s":"75000","ms":"130789.5","rv":"4","f":"4","nf":"0","u":"0"},{"r":"5237260000000133921","rs":"5237260000002018613","s":"-5000","ms":"-81883","rv":"1","f":"0","nf":"1","u":"17"},{"r":"5237260000000134221","rs":"5237260000002018613","s":"10000","ms":"-38440","rv":"0","f":"0","nf":"0","u":"5"},{"r":"5237260000000135021","rs":"5237260000002018613","s":"-1200","ms":"-54639","rv":"5","f":"5","nf":"0","u":"98"},{"r":"5237260000000136068","rs":"5237260000002018613","s":"750","ms":"-70811","rv":"36","f":"27","nf":"9","u":"108"},{"r":"5237260000000136074","rs":"5237260000002018613","s":"250","ms":"-60702.5","rv":"29","f":"22","nf":"7","u":"77"},{"r":"5237260000000136121","rs":"5237260000002018613","s":"-1200","ms":"-47208.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000136133","rs":"5237260000002018613","s":"2000","ms":"-47959.5","rv":"15","f":"8","nf":"7","u":"81"},{"r":"5237260000000136161","rs":"5237260000002018613","s":"-3000","ms":"-44736","rv":"0","f":"0","nf":"0","u":"23"},{"r":"5237260000000136323","rs":"5237260000002018613","s":"1250","ms":"105937.5","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000136343","rs":"5237260000002018613","s":"550","ms":"-66988","rv":"7","f":"6","nf":"1","u":"40"},{"r":"5237260000000136541","rs":"5237260000002018613","s":"1000","ms":"-5335","rv":"9","f":"2","nf":"7","u":"10"},{"r":"5237260000000136641","rs":"5237260000002018613","s":"1000","ms":"-24038.5","rv":"12","f":"5","nf":"7","u":"42"},{"r":"5237260000000137007","rs":"5237260000002018613","s":"70000","ms":"203085.5","rv":"4","f":"4","nf":"0","u":"0"},{"r":"5237260000000137008","rs":"5237260000002018613","s":"5000","ms":"-30233","rv":"3","f":"3","nf":"0","u":"6"},{"r":"5237260000000137581","rs":"5237260000002018613","s":"1","ms":"10614","rv":"11","f":"8","nf":"3","u":"14"},{"r":"5237260000000138261","rs":"5237260000002018613","s":"1","ms":"-63586","rv":"37","f":"17","nf":"20","u":"392"},{"r":"5237260000000138967","rs":"5237260000004193101","s":"500","ms":"-47761","rv":"60","f":"46","nf":"14","u":"418"},{"r":"5237260000000139246","rs":"5237260000002018613","s":"-3500","ms":"-95433.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000139302","rs":"5237260000004193101","s":"1000","ms":"-3388","rv":"17","f":"10","nf":"7","u":"23"},{"r":"5237260000000139341","rs":"5237260000004193101","s":"250","ms":"-69434","rv":"3","f":"3","nf":"0","u":"88"},{"r":"5237260000000139342","rs":"5237260000004193101","s":"500","ms":"-55188","rv":"3","f":"3","nf":"0","u":"28"},{"r":"5237260000000139343","rs":"5237260000004193101","s":"750","ms":"-28439","rv":"25","f":"11","nf":"14","u":"56"},{"r":"5237260000000139366","rs":"5237260000002018613","s":"2000","ms":"16337.5","rv":"4","f":"4","nf":"0","u":"4"},{"r":"5237260000000139441","rs":"5237260000004193101","s":"500","ms":"-44736","rv":"8","f":"7","nf":"1","u":"28"},{"r":"5237260000000139681","rs":"5237260000002018613","s":"-1200","ms":"-75436","rv":"0","f":"0","nf":"0","u":"3"},{"r":"5237260000000139931","rs":"5237260000003459001","s":"20000","ms":"84660","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000139932","rs":"5237260000003459001","s":"70000","ms":"333062","rv":"3","f":"3","nf":"0","u":"0"},{"r":"5237260000000140141","rs":"5237260000003459001","s":"5000","ms":"-49036","rv":"0","f":"0","nf":"0","u":"3"},{"r":"5237260000000141521","rs":"5237260000002018613","s":"-1500","ms":"-25509.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000141541","rs":"5237260000002018613","s":"-3000","ms":"3368","rv":"7","f":"6","nf":"1","u":"6"},{"r":"5237260000000144101","rs":"5237260000002018613","s":"-2000","ms":"-89784","rv":"12","f":"10","nf":"2","u":"673"},{"r":"5237260000000145881","rs":"5237260000002018613","s":"100000","ms":"170071","rv":"3","f":"3","nf":"0","u":"0"},{"r":"5237260000000145901","rs":"5237260000002018613","s":"-26000","ms":"-110436.5","rv":"7","f":"7","nf":"0","u":"319"},{"r":"5237260000000147121","rs":"5237260000002018613","s":"750","ms":"-57935","rv":"3","f":"1","nf":"2","u":"63"},{"r":"5237260000000147241","rs":"5237260000002018613","s":"500","ms":"-51635.5","rv":"2","f":"0","nf":"2","u":"14"},{"r":"5237260000000148181","rs":"5237260000004307563","s":"500","ms":"-13563","rv":"1","f":"1","nf":"0","u":"3"},{"r":"5237260000000151521","rs":"5237260000003459001","s":"25000","ms":"-47538","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000151534","rs":"5237260000002018613","s":"-750","ms":"-106937","rv":"13","f":"11","nf":"2","u":"345"},{"r":"5237260000000155001","rs":"5237260000004193079","s":"-10500","ms":"-116180","rv":"1","f":"1","nf":"0","u":"506"},{"r":"5237260000000164722","rs":"5237260000002018613","s":"75000","ms":"209311","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000165061","rs":"5237260000004193101","s":"1000","ms":"8213","rv":"1","f":"0","nf":"1","u":"0"},{"r":"5237260000000166681","rs":"5237260000002018613","s":"-550","ms":"-42735","rv":"9","f":"9","nf":"0","u":"36"},{"r":"5237260000000167601","rs":"5237260000002018613","s":"-20000","ms":"-87133.5","rv":"46","f":"27","nf":"19","u":"1762"},{"r":"5237260000000167904","rs":"5237260000002018613","s":"500","ms":"13587","rv":"11","f":"8","nf":"3","u":"11"},{"r":"5237260000000167905","rs":"5237260000002018613","s":"750","ms":"-12933","rv":"7","f":"3","nf":"4","u":"12"},{"r":"5237260000000167921","rs":"5237260000002018613","s":"1","ms":"-84037","rv":"102","f":"71","nf":"31","u":"2192"},{"r":"5237260000000169646","rs":"5237260000003459001","s":"10000","ms":"-42585","rv":"0","f":"0","nf":"0","u":"3"},{"r":"5237260000000171654","rs":"5237260000004193098","s":"1","ms":"-44736","rv":"3","f":"1","nf":"2","u":"271"},{"r":"5237260000000186262","rs":"5237260000002018613","s":"70000","ms":"119237","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000187021","rs":"5237260000003459001","s":"50000","ms":"-72280","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000187261","rs":"5237260000002018613","s":"750","ms":"-39187","rv":"9","f":"5","nf":"4","u":"34"},{"r":"5237260000000189361","rs":"5237260000003459001","s":"100000","ms":"283361.5","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000193281","rs":"5237260000002018613","s":"-7000","ms":"-74935","rv":"0","f":"0","nf":"0","u":"101"},{"r":"5237260000000202362","rs":"5237260000004193101","s":"2000","ms":"22914","rv":"5","f":"4","nf":"1","u":"2"},{"r":"5237260000000202761","rs":"5237260000004307563","s":"1","ms":"-63009.5","rv":"19","f":"11","nf":"8","u":"205"},{"r":"5237260000000202965","rs":"5237260000004193098","s":"5000","ms":"75666.5","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000202966","rs":"5237260000004193098","s":"5000","ms":"-96932","rv":"0","f":"0","nf":"0","u":"19"},{"r":"5237260000000202967","rs":"5237260000003459001","s":"1","ms":"-44736","rv":"3","f":"1","nf":"2","u":"271"},{"r":"5237260000000203463","rs":"5237260000004193098","s":"1","ms":"-36937","rv":"1","f":"1","nf":"0","u":"218"},{"r":"5237260000000206921","rs":"5237260000004193101","s":"3000","ms":"513","rv":"5","f":"1","nf":"4","u":"4"},{"r":"5237260000000220401","rs":"5237260000002018613","s":"2000","ms":"-36837","rv":"35","f":"24","nf":"11","u":"132"},{"r":"5237260000000222121","rs":"5237260000003459001","s":"250","ms":"-30613","rv":"18","f":"10","nf":"8","u":"34"},{"r":"5237260000000222142","rs":"5237260000003459001","s":"500","ms":"-54087","rv":"4","f":"4","nf":"0","u":"9"},{"r":"5237260000000222161","rs":"5237260000003459001","s":"1","ms":"70540.5","rv":"3","f":"3","nf":"0","u":"1"},{"r":"5237260000000222161","rs":"5237260000003459001","s":"1500","ms":"-1336","rv":"39","f":"31","nf":"8","u":"50"},{"r":"5237260000000222797","rs":"5237260000002018613","s":"3000","ms":"-39336","rv":"17","f":"10","nf":"7","u":"54"},{"r":"5237260000000222798","rs":"5237260000002018613","s":"-500","ms":"-63685","rv":"5","f":"2","nf":"3","u":"144"},{"r":"5237260000000222799","rs":"5237260000002018613","s":"-1750","ms":"-74436","rv":"21","f":"9","nf":"12","u":"823"},{"r":"5237260000000222891","rs":"5237260000002018613","s":"50000","ms":"78264","rv":"5","f":"4","nf":"1","u":"1"},{"r":"5237260000000223451","rs":"5237260000003459001","s":"20000","ms":"84660","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000225464","rs":"5237260000004307563","s":"1","ms":"-75861.5","rv":"30","f":"24","nf":"6","u":"750"},{"r":"5237260000000226202","rs":"5237260000002018613","s":"100000","ms":"99007","rv":"13","f":"13","nf":"0","u":"0"},{"r":"5237260000000229943","rs":"5237260000002018613","s":"-400","ms":"-80661.5","rv":"0","f":"0","nf":"0","u":"8"},{"r":"5237260000000232863","rs":"5237260000002018613","s":"50000","ms":"80714","rv":"2","f":"2","nf":"0","u":"2"},{"r":"5237260000000233923","rs":"5237260000005583190","s":"100000","ms":"311813","rv":"7","f":"7","nf":"0","u":"0"},{"r":"5237260000000235401","rs":"5237260000002018613","s":"1","ms":"-42840","rv":"177","f":"103","nf":"74","u":"1308"},{"r":"5237260000000236094","rs":"5237260000002018613","s":"-15000","ms":"-110036","rv":"3","f":"3","nf":"0","u":"500"},{"r":"5237260000000239063","rs":"5237260000005583190","s":"40000","ms":"311813","rv":"4","f":"4","nf":"0","u":"0"},{"r":"5237260000000239066","rs":"5237260000004307563","s":"80000","ms":"311813","rv":"5","f":"5","nf":"0","u":"0"},{"r":"5237260000000239066","rs":"5237260000005583190","s":"40000","ms":"252220","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000239069","rs":"5237260000005583190","s":"20000","ms":"214938","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000239578","rs":"5237260000002018613","s":"-1000","ms":"-57114","rv":"0","f":"0","nf":"0","u":"40"},{"r":"5237260000000239636","rs":"5237260000002018613","s":"-8500","ms":"-101362.5","rv":"10","f":"7","nf":"3","u":"732"},{"r":"5237260000000239720","rs":"5237260000002018613","s":"1","ms":"1001","rv":"0","f":"0","nf":"0","u":"14"},{"r":"5237260000000240562","rs":"5237260000004307563","s":"1","ms":"-100934","rv":"0","f":"0","nf":"0","u":"9"},{"r":"5237260000000242554","rs":"5237260000002018613","s":"300","ms":"-36136","rv":"74","f":"53","nf":"21","u":"266"},{"r":"5237260000000242556","rs":"5237260000002018613","s":"200","ms":"-49340","rv":"140","f":"92","nf":"48","u":"759"},{"r":"5237260000000246292","rs":"5237260000005583190","s":"100000","ms":"153262.5","rv":"4","f":"4","nf":"0","u":"0"},{"r":"5237260000000255497","rs":"5237260000003740720","s":"100000","ms":"60270","rv":"22","f":"19","nf":"3","u":"8"},{"r":"5237260000000256379","rs":"5237260000003740720","s":"1","ms":"-20781","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000256379","rs":"5237260000004114128","s":"1","ms":"-50686","rv":"0","f":"0","nf":"0","u":"238"},{"r":"5237260000000256390","rs":"5237260000003740720","s":"1","ms":"41543.5","rv":"26","f":"23","nf":"3","u":"18"},{"r":"5237260000000257684","rs":"5237260000003740720","s":"1","ms":"-27533","rv":"22","f":"19","nf":"3","u":"54"},{"r":"5237260000000270645","rs":"5237260000004307563","s":"1","ms":"-49533","rv":"88","f":"49","nf":"39","u":"531"},{"r":"5237260000000274244","rs":"5237260000005583190","s":"48000","ms":"196265","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000275487","rs":"5237260000005583190","s":"100000","ms":"319063","rv":"3","f":"3","nf":"0","u":"0"},{"r":"5237260000000275491","rs":"5237260000005583190","s":"100000","ms":"367886.5","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000287720","rs":"5237260000002018613","s":"1","ms":"-14994.5","rv":"0","f":"0","nf":"0","u":"46"},{"r":"5237260000000291048","rs":"5237260000005583190","s":"-5000","ms":"-75331","rv":"1","f":"1","nf":"0","u":"4"},{"r":"5237260000000291054","rs":"5237260000005583190","s":"25000","ms":"181414","rv":"6","f":"6","nf":"0","u":"0"},{"r":"5237260000000298013","rs":"5237260000002018613","s":"1","ms":"-121582","rv":"0","f":"0","nf":"0","u":"8"},{"r":"5237260000000298013","rs":"5237260000004307563","s":"750","ms":"-109832","rv":"0","f":"0","nf":"0","u":"9"},{"r":"5237260000000298511","rs":"5237260000004114128","s":"1","ms":"-37060.5","rv":"3","f":"1","nf":"2","u":"33"},{"r":"5237260000000299776","rs":"5237260000004131094","s":"1","ms":"-72280","rv":"26","f":"16","nf":"10","u":"191"},{"r":"5237260000000299777","rs":"5237260000004131094","s":"1","ms":"-72280","rv":"26","f":"16","nf":"10","u":"191"},{"r":"5237260000000299778","rs":"5237260000004131094","s":"1","ms":"-72280","rv":"26","f":"16","nf":"10","u":"191"},{"r":"5237260000000300989","rs":"5237260000002018613","s":"1000","ms":"-13788","rv":"11","f":"6","nf":"5","u":"24"},{"r":"5237260000000300991","rs":"5237260000002018613","s":"400","ms":"-31363","rv":"9","f":"5","nf":"4","u":"41"},{"r":"5237260000000303210","rs":"5237260000004095007","s":"1","ms":"-86885","rv":"48","f":"30","nf":"18","u":"731"},{"r":"5237260000000303212","rs":"5237260000004095007","s":"1","ms":"-99306","rv":"17","f":"14","nf":"3","u":"155"},{"r":"5237260000000303213","rs":"5237260000004095007","s":"1","ms":"-87757","rv":"15","f":"9","nf":"6","u":"163"},{"r":"5237260000000303243","rs":"5237260000004095007","s":"1","ms":"-93661","rv":"48","f":"33","nf":"15","u":"1108"},{"r":"5237260000000303244","rs":"5237260000004095007","s":"1","ms":"-88333","rv":"1","f":"1","nf":"0","u":"125"},{"r":"5237260000000303247","rs":"5237260000004095007","s":"1","ms":"-89185","rv":"17","f":"15","nf":"2","u":"28"},{"r":"5237260000000303249","rs":"5237260000004095007","s":"1","ms":"-123336","rv":"0","f":"0","nf":"0","u":"13"},{"r":"5237260000000303256","rs":"5237260000004095007","s":"1","ms":"-98484.5","rv":"27","f":"19","nf":"8","u":"699"},{"r":"5237260000000303257","rs":"5237260000004095007","s":"1000","ms":"-71411.5","rv":"3","f":"2","nf":"1","u":"31"},{"r":"5237260000000303259","rs":"5237260000004095007","s":"1500","ms":"-104783","rv":"0","f":"0","nf":"0","u":"9"},{"r":"5237260000000303261","rs":"5237260000004095007","s":"1000","ms":"-97936.5","rv":"0","f":"0","nf":"0","u":"4"},{"r":"5237260000000305994","rs":"5237260000002018613","s":"1","ms":"1002","rv":"0","f":"0","nf":"0","u":"26"},{"r":"5237260000000306001","rs":"5237260000004193098","s":"1","ms":"-23732.5","rv":"25","f":"22","nf":"3","u":"61"},{"r":"5237260000000306001","rs":"5237260000004193099","s":"1","ms":"-20781","rv":"25","f":"22","nf":"3","u":"62"},{"r":"5237260000000306023","rs":"5237260000004095007","s":"1","ms":"-100185","rv":"18","f":"13","nf":"5","u":"461"},{"r":"5237260000000306827","rs":"5237260000002018613","s":"60000","ms":"53002","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000308389","rs":"5237260000003459001","s":"50000","ms":"224939","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000308875","rs":"5237260000004307563","s":"70000","ms":"42612","rv":"2","f":"1","nf":"1","u":"1"},{"r":"5237260000000309116","rs":"5237260000004307563","s":"0","ms":"-14810.5","rv":"16","f":"15","nf":"1","u":"24"},{"r":"5237260000000309116","rs":"5237260000005602467","s":"0","ms":"-58032","rv":"0","f":"0","nf":"0","u":"15"},{"r":"5237260000000309403","rs":"5237260000002018613","s":"5000","ms":"-56339","rv":"7","f":"5","nf":"2","u":"38"},{"r":"5237260000000309404","rs":"5237260000003459001","s":"10000","ms":"104890.5","rv":"8","f":"8","nf":"0","u":"4"},{"r":"5237260000000309408","rs":"5237260000003459001","s":"10000","ms":"-68658","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000309409","rs":"5237260000003459001","s":"10000","ms":"-72838","rv":"1","f":"1","nf":"0","u":"8"},{"r":"5237260000000309410","rs":"5237260000003459001","s":"10000","ms":"14215","rv":"1","f":"1","nf":"0","u":"2"},{"r":"5237260000000309415","rs":"5237260000003459001","s":"0","ms":"-52635.5","rv":"4","f":"4","nf":"0","u":"8"},{"r":"5237260000000323105","rs":"5237260000004193101","s":"1000","ms":"4715.5","rv":"7","f":"7","nf":"0","u":"7"},{"r":"5237260000000323107","rs":"5237260000004193101","s":"-1000","ms":"-62186","rv":"0","f":"0","nf":"0","u":"23"},{"r":"5237260000000326524","rs":"5237260000004307563","s":"-1500","ms":"-59183","rv":"15","f":"7","nf":"8","u":"242"},{"r":"5237260000000327124","rs":"5237260000004307563","s":"-2500","ms":"-75087","rv":"4","f":"1","nf":"3","u":"132"},{"r":"5237260000000329384","rs":"5237260000004307563","s":"4000","ms":"77640.5","rv":"8","f":"8","nf":"0","u":"8"},{"r":"5237260000000344846","rs":"5237260000004307563","s":"-2000","ms":"-79587","rv":"28","f":"20","nf":"8","u":"899"},{"r":"5237260000000362544","rs":"5237260000003459001","s":"70000","ms":"151138","rv":"6","f":"6","nf":"0","u":"0"},{"r":"5237260000000363225","rs":"5237260000002018613","s":"1","ms":"1","rv":"0","f":"0","nf":"0","u":"14"},{"r":"5237260000000367404","rs":"5237260000004193079","s":"1","ms":"-59186","rv":"8","f":"0","nf":"8","u":"155"},{"r":"5237260000000371644","rs":"5237260000003459001","s":"1","ms":"-109832","rv":"0","f":"0","nf":"0","u":"9"},{"r":"5237260000000371904","rs":"5237260000002018613","s":"1","ms":"5","rv":"3","f":"3","nf":"0","u":"81"},{"r":"5237260000000384547","rs":"5237260000004307563","s":"0","ms":"-75485","rv":"256","f":"154","nf":"102","u":"3307"},{"r":"5237260000000393190","rs":"5237260000003459001","s":"1","ms":"-57729","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000395789","rs":"5237260000004307563","s":"3000","ms":"-34035.5","rv":"1","f":"0","nf":"1","u":"3"},{"r":"5237260000000396155","rs":"5237260000002018613","s":"2500","ms":"-62082","rv":"3","f":"2","nf":"1","u":"32"},{"r":"5237260000000396412","rs":"5237260000002018613","s":"1","ms":"-104607.5","rv":"20","f":"12","nf":"8","u":"588"},{"r":"5237260000000398011","rs":"5237260000002018613","s":"-10000","ms":"-117181","rv":"13","f":"10","nf":"3","u":"450"},{"r":"5237260000000399396","rs":"5237260000004307563","s":"50000","ms":"60964.5","rv":"18","f":"15","nf":"3","u":"0"},{"r":"5237260000000400526","rs":"5237260000002018613","s":"1","ms":"-10936","rv":"22","f":"13","nf":"9","u":"37"},{"r":"5237260000000402565","rs":"5237260000004307563","s":"1","ms":"-86187","rv":"3","f":"2","nf":"1","u":"244"},{"r":"5237260000000403833","rs":"5237260000004307563","s":"100","ms":"-25086","rv":"99","f":"62","nf":"37","u":"338"},{"r":"5237260000000404415","rs":"5237260000002018613","s":"1","ms":"-76681","rv":"91","f":"44","nf":"47","u":"1730"},{"r":"5237260000000418153","rs":"5237260000004307563","s":"2000","ms":"-30187","rv":"178","f":"108","nf":"70","u":"705"},{"r":"5237260000000418154","rs":"5237260000004307563","s":"1","ms":"-69362.5","rv":"71","f":"40","nf":"31","u":"1117"},{"r":"5237260000000418155","rs":"5237260000004307563","s":"-8000","ms":"-102340","rv":"26","f":"22","nf":"4","u":"1389"},{"r":"5237260000000419933","rs":"5237260000004307563","s":"70000","ms":"71964","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000423571","rs":"5237260000004307563","s":"-14000","ms":"-119587","rv":"8","f":"7","nf":"1","u":"657"},{"r":"5237260000000433398","rs":"5237260000002018613","s":"1","ms":"-17179","rv":"23","f":"18","nf":"5","u":"218"},{"r":"5237260000000433956","rs":"5237260000002018613","s":"1","ms":"-76681","rv":"91","f":"44","nf":"47","u":"1730"},{"r":"5237260000000436862","rs":"5237260000004307563","s":"1","ms":"-65363.5","rv":"47","f":"32","nf":"15","u":"135"},{"r":"5237260000000436863","rs":"5237260000004307563","s":"-3000","ms":"3962","rv":"19","f":"13","nf":"6","u":"28"},{"r":"5237260000000441048","rs":"5237260000002018613","s":"-10000","ms":"-113310","rv":"0","f":"0","nf":"0","u":"190"},{"r":"5237260000000441137","rs":"5237260000002018613","s":"600","ms":"-66577","rv":"68","f":"28","nf":"40","u":"1035"},{"r":"5237260000000441415","rs":"5237260000002018613","s":"1","ms":"-62235.5","rv":"17","f":"4","nf":"13","u":"399"},{"r":"5237260000000441935","rs":"5237260000004307563","s":"1","ms":"-4539","rv":"32","f":"26","nf":"6","u":"57"},{"r":"5237260000000442874","rs":"5237260000004307563","s":"1","ms":"-87786","rv":"39","f":"23","nf":"16","u":"630"},{"r":"5237260000000442875","rs":"5237260000004307563","s":"1","ms":"-87786","rv":"39","f":"23","nf":"16","u":"630"},{"r":"5237260000000442876","rs":"5237260000004307563","s":"1","ms":"-87786","rv":"39","f":"23","nf":"16","u":"630"},{"r":"5237260000000444454","rs":"5237260000004307563","s":"100","ms":"-52463","rv":"73","f":"36","nf":"37","u":"933"},{"r":"5237260000000450308","rs":"5237260000004193079","s":"1","ms":"16964","rv":"2","f":"1","nf":"1","u":"2"},{"r":"5237260000000456333","rs":"5237260000002018613","s":"1","ms":"-49133","rv":"0","f":"0","nf":"0","u":"4"},{"r":"5237260000000456333","rs":"5237260000004193079","s":"1","ms":"-9229","rv":"31","f":"19","nf":"12","u":"66"},{"r":"5237260000000456402","rs":"5237260000004307563","s":"1","ms":"-60210","rv":"17","f":"13","nf":"4","u":"139"},{"r":"5237260000000458319","rs":"5237260000002018613","s":"3000","ms":"-11158.5","rv":"18","f":"14","nf":"4","u":"22"},{"r":"5237260000000462113","rs":"5237260000002018613","s":"-2000","ms":"-112863.5","rv":"2","f":"1","nf":"1","u":"360"},{"r":"5237260000000462153","rs":"5237260000002018613","s":"-10000","ms":"-150681","rv":"1","f":"1","nf":"0","u":"192"},{"r":"5237260000000466193","rs":"5237260000004307563","s":"1","ms":"-56228.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000466194","rs":"5237260000004307563","s":"1","ms":"-41712","rv":"0","f":"0","nf":"0","u":"4"},{"r":"5237260000000466195","rs":"5237260000004307563","s":"1","ms":"-56228.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000466196","rs":"5237260000004307563","s":"1","ms":"15267","rv":"1","f":"0","nf":"1","u":"2"},{"r":"5237260000000483957","rs":"5237260000004789933","s":"0","ms":"-69813.5","rv":"7","f":"4","nf":"3","u":"113"},{"r":"5237260000000485034","rs":"5237260000004307563","s":"1","ms":"-72836","rv":"0","f":"0","nf":"0","u":"56"},{"r":"5237260000000488936","rs":"5237260000002018613","s":"-10000","ms":"-101611.5","rv":"0","f":"0","nf":"0","u":"36"},{"r":"5237260000000491153","rs":"5237260000004307563","s":"-2000","ms":"-34439","rv":"11","f":"6","nf":"5","u":"88"},{"r":"5237260000000492493","rs":"5237260000004193079","s":"1","ms":"-19734","rv":"10","f":"7","nf":"3","u":"28"},{"r":"5237260000000492513","rs":"5237260000004307563","s":"1","ms":"-44086","rv":"4","f":"3","nf":"1","u":"17"},{"r":"5237260000000492514","rs":"5237260000004307563","s":"-5000","ms":"-47837","rv":"1","f":"1","nf":"0","u":"12"},{"r":"5237260000000512433","rs":"5237260000004307563","s":"750","ms":"-26910.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000525053","rs":"5237260000002018613","s":"1","ms":"-32382","rv":"106","f":"71","nf":"35","u":"344"},{"r":"5237260000000539853","rs":"5237260000002018613","s":"1","ms":"-96932","rv":"36","f":"26","nf":"10","u":"1005"},{"r":"5237260000000539873","rs":"5237260000002018613","s":"1","ms":"-96932","rv":"36","f":"26","nf":"10","u":"1005"},{"r":"5237260000000539913","rs":"5237260000002018613","s":"70000","ms":"124514","rv":"3","f":"3","nf":"0","u":"0"},{"r":"5237260000000539915","rs":"5237260000002018613","s":"2000","ms":"25166","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000539916","rs":"5237260000002018613","s":"1000","ms":"28314","rv":"2","f":"2","nf":"0","u":"1"},{"r":"5237260000000560293","rs":"5237260000002018613","s":"-30000","ms":"-109011","rv":"9","f":"6","nf":"3","u":"463"},{"r":"5237260000000560294","rs":"5237260000002018613","s":"1","ms":"-52037","rv":"90","f":"53","nf":"37","u":"870"},{"r":"5237260000000568553","rs":"5237260000002018613","s":"1","ms":"-40904.5","rv":"10","f":"9","nf":"1","u":"26"},{"r":"5237260000000576893","rs":"5237260000002018613","s":"-3000","ms":"-57183","rv":"0","f":"0","nf":"0","u":"10"},{"r":"5237260000000579953","rs":"5237260000003459001","s":"70000","ms":"3367","rv":"1","f":"0","nf":"1","u":"0"},{"r":"5237260000000581433","rs":"5237260000002018613","s":"-1200","ms":"-76184","rv":"132","f":"79","nf":"53","u":"2597"},{"r":"5237260000000581793","rs":"5237260000002018613","s":"0","ms":"-42611.5","rv":"0","f":"0","nf":"0","u":"4"},{"r":"5237260000000581793","rs":"5237260000002018613","s":"10000","ms":"-51936","rv":"1","f":"1","nf":"0","u":"8"},{"r":"5237260000000590454","rs":"5237260000002018613","s":"1","ms":"-54561.5","rv":"56","f":"41","nf":"15","u":"354"},{"r":"5237260000000590455","rs":"5237260000002018613","s":"1","ms":"-76935","rv":"1","f":"1","nf":"0","u":"56"},{"r":"5237260000000599533","rs":"5237260000002018613","s":"1","ms":"-84029","rv":"1","f":"1","nf":"0","u":"18"},{"r":"5237260000000600195","rs":"5237260000002018613","s":"1","ms":"-73731.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000607075","rs":"5237260000004193099","s":"1","ms":"5","rv":"3","f":"3","nf":"0","u":"81"},{"r":"5237260000000607673","rs":"5237260000002018613","s":"3000","ms":"-84030","rv":"0","f":"0","nf":"0","u":"7"},{"r":"5237260000000617894","rs":"5237260000003459001","s":"50000","ms":"100816","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000619296","rs":"5237260000004307563","s":"70000","ms":"135067","rv":"7","f":"7","nf":"0","u":"0"},{"r":"5237260000000624293","rs":"5237260000005289625","s":"1","ms":"1","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000624294","rs":"5237260000005289625","s":"1","ms":"2","rv":"43","f":"13","nf":"30","u":"14"},{"r":"5237260000000624295","rs":"5237260000005289625","s":"1","ms":"1","rv":"46","f":"10","nf":"36","u":"13"},{"r":"5237260000000624296","rs":"5237260000005289625","s":"1","ms":"1","rv":"1","f":"1","nf":"0","u":"3"},{"r":"5237260000000624297","rs":"5237260000005289625","s":"1","ms":"1","rv":"1","f":"0","nf":"1","u":"0"},{"r":"5237260000000624298","rs":"5237260000005289625","s":"1","ms":"1","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000624299","rs":"5237260000005289625","s":"1","ms":"1","rv":"3","f":"2","nf":"1","u":"2"},{"r":"5237260000000624301","rs":"5237260000005289625","s":"1","ms":"1","rv":"36","f":"9","nf":"27","u":"16"},{"r":"5237260000000624302","rs":"5237260000005289625","s":"1","ms":"1","rv":"2","f":"1","nf":"1","u":"1"},{"r":"5237260000000624303","rs":"5237260000005289625","s":"1","ms":"1","rv":"11","f":"2","nf":"9","u":"2"},{"r":"5237260000000624306","rs":"5237260000005289625","s":"1","ms":"1","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000624307","rs":"5237260000005289625","s":"1","ms":"1","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000624308","rs":"5237260000005289625","s":"1","ms":"1","rv":"1","f":"0","nf":"1","u":"0"},{"r":"5237260000000624653","rs":"5237260000003459001","s":"200000","ms":"325007","rv":"7","f":"7","nf":"0","u":"0"},{"r":"5237260000000625333","rs":"5237260000002018613","s":"100000","ms":"212505.5","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000628874","rs":"5237260000002018613","s":"20000","ms":"-66687","rv":"0","f":"0","nf":"0","u":"17"},{"r":"5237260000000630513","rs":"5237260000004307563","s":"1","ms":"-42037","rv":"2","f":"2","nf":"0","u":"7"},{"r":"5237260000000632093","rs":"5237260000004307563","s":"1","ms":"-33082.5","rv":"100","f":"65","nf":"35","u":"344"},{"r":"5237260000000638293","rs":"5237260000002018613","s":"-30000","ms":"-124038","rv":"5","f":"4","nf":"1","u":"348"},{"r":"5237260000000638353","rs":"5237260000002018613","s":"1","ms":"110789.5","rv":"15","f":"14","nf":"1","u":"3"},{"r":"5237260000000639153","rs":"5237260000004307563","s":"1","ms":"14639.5","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000643874","rs":"5237260000005289625","s":"1","ms":"2","rv":"56","f":"23","nf":"33","u":"13"},{"r":"5237260000000643895","rs":"5237260000005289625","s":"1","ms":"2","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000644073","rs":"5237260000002018613","s":"1000","ms":"-76536.5","rv":"3","f":"2","nf":"1","u":"63"},{"r":"5237260000000644074","rs":"5237260000004307563","s":"-1000","ms":"-70514","rv":"4","f":"3","nf":"1","u":"186"},{"r":"5237260000000648673","rs":"5237260000002018613","s":"1","ms":"-62384","rv":"156","f":"96","nf":"60","u":"1855"},{"r":"5237260000000649094","rs":"5237260000002018613","s":"0","ms":"-64484","rv":"155","f":"95","nf":"60","u":"1796"},{"r":"5237260000000649098","rs":"5237260000002018613","s":"0","ms":"26467","rv":"72","f":"53","nf":"19","u":"51"},{"r":"5237260000000657036","rs":"5237260000004307563","s":"70000","ms":"84261","rv":"3","f":"3","nf":"0","u":"0"},{"r":"5237260000000659693","rs":"5237260000005289625","s":"1","ms":"2","rv":"5","f":"1","nf":"4","u":"2"},{"r":"5237260000000659694","rs":"5237260000005289625","s":"1","ms":"2","rv":"1","f":"0","nf":"1","u":"0"},{"r":"5237260000000661933","rs":"5237260000004307563","s":"20000","ms":"86512","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000663493","rs":"5237260000005289625","s":"1","ms":"1","rv":"1","f":"0","nf":"1","u":"0"},{"r":"5237260000000666434","rs":"5237260000002018613","s":"15000","ms":"60712","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000667133","rs":"5237260000004193079","s":"200000","ms":"151966","rv":"17","f":"17","nf":"0","u":"0"},{"r":"5237260000000667134","rs":"5237260000004193079","s":"200000","ms":"100417","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000667137","rs":"5237260000004193079","s":"200000","ms":"158940","rv":"8","f":"8","nf":"0","u":"0"},{"r":"5237260000000667144","rs":"5237260000004193079","s":"200000","ms":"187964","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000668753","rs":"5237260000004307563","s":"100000","ms":"14639.5","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000673613","rs":"5237260000004193101","s":"15000","ms":"42586.5","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000675553","rs":"5237260000002018613","s":"10000","ms":"-6685","rv":"6","f":"6","nf":"0","u":"30"},{"r":"5237260000000678193","rs":"5237260000001514356","s":"0","ms":"0","rv":"18","f":"18","nf":"0","u":"1"},{"r":"5237260000000678335","rs":"5237260000005410051","s":"0","ms":"0","rv":"3","f":"3","nf":"0","u":"0"},{"r":"5237260000000679033","rs":"5237260000004193100","s":"30000","ms":"28415","rv":"1","f":"0","nf":"1","u":"1"},{"r":"5237260000000683356","rs":"5237260000002018613","s":"-15000","ms":"-61138","rv":"5","f":"4","nf":"1","u":"615"},{"r":"5237260000000683357","rs":"5237260000002018613","s":"-20000","ms":"-45361.5","rv":"2","f":"1","nf":"1","u":"88"},{"r":"5237260000000683358","rs":"5237260000002018613","s":"30000","ms":"15188","rv":"19","f":"10","nf":"9","u":"19"},{"r":"5237260000000683361","rs":"5237260000002018613","s":"-30000","ms":"-86035.5","rv":"3","f":"3","nf":"0","u":"769"},{"r":"5237260000000683363","rs":"5237260000002018613","s":"-25000","ms":"-57586","rv":"1","f":"0","nf":"1","u":"158"},{"r":"5237260000000683365","rs":"5237260000002018613","s":"25000","ms":"23910.5","rv":"47","f":"20","nf":"27","u":"53"},{"r":"5237260000000684253","rs":"5237260000002018613","s":"25000","ms":"46463","rv":"67","f":"50","nf":"17","u":"20"},{"r":"5237260000000686233","rs":"5237260000001514356","s":"0","ms":"0","rv":"31","f":"18","nf":"13","u":"1"},{"r":"5237260000000686813","rs":"5237260000004307563","s":"50000","ms":"22092","rv":"1","f":"0","nf":"1","u":"1"},{"r":"5237260000000692168","rs":"5237260000002018613","s":"-25000","ms":"-117181","rv":"1","f":"1","nf":"0","u":"215"},{"r":"5237260000000692537","rs":"5237260000002018613","s":"-29000","ms":"-125588","rv":"7","f":"7","nf":"0","u":"724"},{"r":"5237260000000693334","rs":"5237260000002018613","s":"1500","ms":"13415","rv":"2","f":"1","nf":"1","u":"1"},{"r":"5237260000000693337","rs":"5237260000002018613","s":"2500","ms":"-66438","rv":"26","f":"22","nf":"4","u":"111"},{"r":"5237260000000693338","rs":"5237260000002018613","s":"10000","ms":"-150739","rv":"1","f":"1","nf":"0","u":"3"},{"r":"5237260000000693340","rs":"5237260000002018613","s":"700","ms":"-161239","rv":"1","f":"1","nf":"0","u":"4"},{"r":"5237260000000693341","rs":"5237260000004193101","s":"70000","ms":"22914","rv":"5","f":"4","nf":"1","u":"2"},{"r":"5237260000000693793","rs":"5237260000004193079","s":"-80000","ms":"-64210","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000693794","rs":"5237260000004193079","s":"-80000","ms":"-86431","rv":"6","f":"5","nf":"1","u":"29"},{"r":"5237260000000693795","rs":"5237260000004193079","s":"-80000","ms":"-142738","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000697359","rs":"5237260000002018613","s":"1","ms":"-76933","rv":"109","f":"61","nf":"48","u":"1572"},{"r":"5237260000000701773","rs":"5237260000002018613","s":"-8500","ms":"-99177","rv":"21","f":"11","nf":"10","u":"958"},{"r":"5237260000000704634","rs":"5237260000002018613","s":"1000","ms":"-32538","rv":"49","f":"35","nf":"14","u":"271"},{"r":"5237260000000707873","rs":"5237260000004307563","s":"1","ms":"-16688","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000711193","rs":"5237260000004307563","s":"2000","ms":"-33287","rv":"10","f":"3","nf":"7","u":"19"},{"r":"5237260000000711633","rs":"5237260000004307563","s":"2000","ms":"-124438","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000715345","rs":"5237260000004307563","s":"1","ms":"-78532","rv":"85","f":"62","nf":"23","u":"1560"},{"r":"5237260000000716234","rs":"5237260000002018613","s":"1","ms":"-80235.5","rv":"12","f":"12","nf":"0","u":"124"},{"r":"5237260000000716235","rs":"5237260000002018613","s":"10000","ms":"-83236","rv":"0","f":"0","nf":"0","u":"3"},{"r":"5237260000000716634","rs":"5237260000004307563","s":"10000","ms":"26866","rv":"2","f":"0","nf":"2","u":"1"},{"r":"5237260000000726894","rs":"5237260000002018613","s":"1","ms":"-49688","rv":"5","f":"4","nf":"1","u":"38"},{"r":"5237260000000727214","rs":"5237260000004307563","s":"10000","ms":"25310.5","rv":"2","f":"0","nf":"2","u":"0"},{"r":"5237260000000730263","rs":"5237260000004193099","s":"70000","ms":"110218.5","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000731491","rs":"5237260000004193099","s":"70000","ms":"382718","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000734089","rs":"5237260000004307563","s":"10000","ms":"36815","rv":"12","f":"7","nf":"5","u":"5"},{"r":"5237260000000734516","rs":"5237260000002018613","s":"1","ms":"2001","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000734516","rs":"5237260000005543911","s":"2000","ms":"2001","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000734603","rs":"5237260000005289625","s":"1","ms":"2","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000735661","rs":"5237260000002018613","s":"10000","ms":"117888","rv":"35","f":"31","nf":"4","u":"1"},{"r":"5237260000000735662","rs":"5237260000002018613","s":"10000","ms":"119166","rv":"6","f":"6","nf":"0","u":"1"},{"r":"5237260000000735663","rs":"5237260000002018613","s":"10000","ms":"142413","rv":"13","f":"13","nf":"0","u":"0"},{"r":"5237260000000736394","rs":"5237260000002018613","s":"2000","ms":"25759","rv":"3","f":"2","nf":"1","u":"4"},{"r":"5237260000000736396","rs":"5237260000002018613","s":"-7000","ms":"-44978","rv":"5","f":"4","nf":"1","u":"14"},{"r":"5237260000000737513","rs":"5237260000004307563","s":"3000","ms":"-4733","rv":"16","f":"15","nf":"1","u":"22"},{"r":"5237260000000737853","rs":"5237260000002018613","s":"3000","ms":"-33287","rv":"3","f":"0","nf":"3","u":"9"},{"r":"5237260000000745374","rs":"5237260000002018613","s":"-6500","ms":"-99683.5","rv":"21","f":"11","nf":"10","u":"925"},{"r":"5237260000000745951","rs":"5237260000002018613","s":"-24000","ms":"-116689","rv":"21","f":"15","nf":"6","u":"486"},{"r":"5237260000000754185","rs":"5237260000005583190","s":"100000","ms":"311813","rv":"3","f":"3","nf":"0","u":"0"},{"r":"5237260000000754186","rs":"5237260000005583190","s":"40000","ms":"319063","rv":"2","f":"2","nf":"0","u":"1"},{"r":"5237260000000755193","rs":"5237260000005583190","s":"1","ms":"154564","rv":"12","f":"12","nf":"0","u":"8"},{"r":"5237260000000758153","rs":"5237260000002018613","s":"1","ms":"-69434","rv":"302","f":"195","nf":"107","u":"3506"},{"r":"5237260000000758978","rs":"5237260000004307563","s":"1","ms":"12141","rv":"2","f":"1","nf":"1","u":"2"},{"r":"5237260000000759719","rs":"5237260000002018613","s":"29000","ms":"48913","rv":"16","f":"10","nf":"6","u":"5"},{"r":"5237260000000759873","rs":"5237260000005589845","s":"1","ms":"-69434","rv":"302","f":"195","nf":"107","u":"3502"},{"r":"5237260000000759874","rs":"5237260000005589845","s":"1","ms":"-20785.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000759878","rs":"5237260000005589845","s":"8500","ms":"-28640","rv":"9","f":"7","nf":"2","u":"13"},{"r":"5237260000000759879","rs":"5237260000005589845","s":"18500","ms":"-20785.5","rv":"0","f":"0","nf":"0","u":"2"},{"r":"5237260000000759880","rs":"5237260000005589845","s":"1","ms":"-69783","rv":"281","f":"180","nf":"101","u":"3410"},{"r":"5237260000000759881","rs":"5237260000005589845","s":"1","ms":"-44187","rv":"9","f":"6","nf":"3","u":"64"},{"r":"5237260000000759882","rs":"5237260000005589845","s":"1","ms":"-100189","rv":"2","f":"1","nf":"1","u":"15"},{"r":"5237260000000759897","rs":"5237260000005589845","s":"1","ms":"56063.5","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000759934","rs":"5237260000002018613","s":"1","ms":"78319","rv":"37","f":"35","nf":"2","u":"4"},{"r":"5237260000000760301","rs":"5237260000004307563","s":"16000","ms":"17912","rv":"3","f":"1","nf":"2","u":"1"},{"r":"5237260000000760444","rs":"5237260000005583190","s":"1","ms":"-60683","rv":"2","f":"2","nf":"0","u":"7"},{"r":"5237260000000760622","rs":"5237260000002018613","s":"1","ms":"-5775","rv":"4","f":"4","nf":"0","u":"9"},{"r":"5237260000000761095","rs":"5237260000004193098","s":"100000","ms":"75666.5","rv":"1","f":"1","nf":"0","u":"1"},{"r":"5237260000000761688","rs":"5237260000004193079","s":"1","ms":"-114085","rv":"1","f":"1","nf":"0","u":"4"},{"r":"5237260000000763216","rs":"5237260000002018613","s":"1","ms":"-13335","rv":"1","f":"0","nf":"1","u":"2"},{"r":"5237260000000764357","rs":"5237260000005583190","s":"1","ms":"24214","rv":"2","f":"2","nf":"0","u":"1"},{"r":"5237260000000764795","rs":"5237260000004193098","s":"1","ms":"-66434","rv":"0","f":"0","nf":"0","u":"6"},{"r":"5237260000000764862","rs":"5237260000004193098","s":"1","ms":"-39933","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000764899","rs":"5237260000002018613","s":"1","ms":"-21187.5","rv":"0","f":"0","nf":"0","u":"4"},{"r":"5237260000000764910","rs":"5237260000005589845","s":"1","ms":"54067","rv":"1","f":"1","nf":"0","u":"0"},{"r":"5237260000000765635","rs":"5237260000004307563","s":"1","ms":"-38935.5","rv":"0","f":"0","nf":"0","u":"14"},{"r":"5237260000000765669","rs":"5237260000005289625","s":"1","ms":"2","rv":"0","f":"0","nf":"0","u":"1"},{"r":"5237260000000766026","rs":"5237260000005589845","s":"16000","ms":"17514","rv":"40","f":"33","nf":"7","u":"29"},{"r":"5237260000000766027","rs":"5237260000005589845","s":"24000","ms":"47363","rv":"22","f":"20","nf":"2","u":"12"},{"r":"5237260000000766028","rs":"5237260000005589845","s":"-15000","ms":"-50686","rv":"3","f":"1","nf":"2","u":"58"},{"r":"5237260000000766029","rs":"5237260000005589845","s":"-8500","ms":"-76833","rv":"0","f":"0","nf":"0","u":"6"},{"r":"5237260000000766030","rs":"5237260000005589845","s":"-1000","ms":"-70237.5","rv":"237","f":"141","nf":"96","u":"3385"},{"r":"5237260000000766031","rs":"5237260000005589845","s":"-13000","ms":"-108186.5","rv":"16","f":"8","nf":"8","u":"684"},{"r":"5237260000000766032","rs":"5237260000005589845","s":"-20000","ms":"-110786","rv":"17","f":"11","nf":"6","u":"780"},{"r":"5237260000000766099","rs":"5237260000005602467","s":"22000","ms":"14617","rv":"16","f":"8","nf":"8","u":"10"},{"r":"5237260000000766101","rs":"5237260000005602467","s":"1000","ms":"-26461","rv":"5","f":"1","nf":"4","u":"87"},{"r":"5237260000000766102","rs":"5237260000005602467","s":"-14500","ms":"-67836","rv":"7","f":"5","nf":"2","u":"326"},{"r":"5237260000000766103","rs":"5237260000005602467","s":"-15000","ms":"-93587","rv":"6","f":"6","nf":"0","u":"437"},{"r":"5237260000000766104","rs":"5237260000005602467","s":"48000","ms":"58791.5","rv":"2","f":"2","nf":"0","u":"0"},{"r":"5237260000000766105","rs":"5237260000005602467","s":"47000","ms":"55090","rv":"5","f":"3","nf":"2","u":"1"},{"r":"5237260000000766106","rs":"5237260000005602467","s":"26750","ms":"31188","rv":"2","f":"0","nf":"2","u":"2"},{"r":"5237260000000766107","rs":"5237260000005602467","s":"1","ms":"-17336","rv":"5","f":"3","nf":"2","u":"38"},{"r":"5237260000000766108","rs":"5237260000005602467","s":"1","ms":"-36083","rv":"2","f":"0","nf":"2","u":"83"},{"r":"5237260000000766109","rs":"5237260000005602467","s":"-15000","ms":"-50036","rv":"0","f":"0","nf":"0","u":"37"},{"r":"5237260000000766111","rs":"5237260000005602467","s":"20000","ms":"5469","rv":"2","f":"2","nf":"0","u":"3"},{"r":"5237260000000766112","rs":"5237260000005602467","s":"17000","ms":"2714","rv":"8","f":"1","nf":"7","u":"15"},{"r":"5237260000000766114","rs":"5237260000005602467","s":"-18500","ms":"-57382.5","rv":"0","f":"0","nf":"0","u":"14"},{"r":"5237260000000766115","rs":"5237260000005602467","s":"-18500","ms":"-83260","rv":"1","f":"1","nf":"0","u":"13"},{"r":"5237260000000766116","rs":"5237260000005602467","s":"-29000","ms":"-84012","rv":"0","f":"0","nf":"0","u":"30"},{"r":"5237260000000766119","rs":"5237260000005602467","s":"1","ms":"-27382","rv":"0","f":"0","nf":"0","u":"6"},{"r":"5237260000000766120","rs":"5237260000005602467","s":"-20500","ms":"-60683","rv":"0","f":"0","nf":"0","u":"9"},{"r":"5237260000000768501","rs":"5237260000005602467","s":"10000","ms":"11266","rv":"2","f":"0","nf":"2","u":"2"},{"r":"5237260000000768502","rs":"5237260000005602467","s":"-38000","ms":"-99985.5","rv":"1","f":"1","nf":"0","u":"407"},{"r":"5237260000000768504","rs":"5237260000005602467","s":"-47000","ms":"-129838","rv":"1","f":"1","nf":"0","u":"160"},{"r":"5237260000000768917","rs":"5237260000002018613","s":"1","ms":"-69434","rv":"9","f":"5","nf":"4","u":"98"},{"r":"5237260000000768918","rs":"5237260000002018613","s":"1","ms":"416710","rv":"1","f":"1","nf":"0","u":"0"}]},"flex":{"rulesetId":"Rule Set Id","exportSummaryOption":"Check here to include summary values in the export.","rowCountTemplate":"({0} / {1} rows)","ruleTripRate":"Rule Trip Rate","nonFraudCount":"Non-Fraud Count","nonFraudRate":"Non-Fraud Rate","percentSymbol":"%","columns":"Columns","medianScore":"Median Score","score":"Score","total":"Total","hierarchyname":" Production","unresolvedRate":"Unresolved Rate","ruleName":"Rule Name","reviewed":"Reviewed","reviewedCount":"Reviewed Count","fraudCount":"Fraud Count","totalTransactionCount":"Total Transaction Count","ruleId":"Rule ID","confidential":"CONFIDENTIAL","unresolvedCount":"Unresolved Count","isCancel":"Cancel","selectVirtualTable":"Data Type","footerCopyright":"© 2007-2015 , Inc.","ruleset":"Rule Set","reportTitle":"Rules Execution Analysis","execByOn":"(host admin) Sep 7, 2016 6:53:59 AM","medianTransactionScore":"Median Transaction Score","fraudRate":"Fraud Rate","exportToCsv":"Export to CSV","selectHierarchy":"Data Source","businessProcess":"Business Process","relativeRisk":"Relative Risk","toggleDetails":"Show/Hide Details","rulescore":"Rule Score","totalRuleTrips":"Total Rule Trips","statusMesg":"","exportFileName":"Use this name for the exported file","smoothedRisk":"Smoothed Risk"},"aggrid.license.key":"Accertify_15-Mar-2016_MTQ4OTUzNjAwMDAwMA\u003d\u003dd4abc0559d18a4a25de3588cfcf76efd"};
+</script>
+
+<script>init()</script>
+</body>
+</html>
