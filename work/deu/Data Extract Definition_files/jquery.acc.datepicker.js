@@ -16,7 +16,7 @@
  *
  * Locales using default language:
  */
-
+/*
 
 ;(function($){
     $(document).ready(function() { //make sure datepicker regionals are loaded before calling
@@ -93,9 +93,10 @@
         $.datepicker.setDefaults($.datepicker.regional['es-US']);
     });
 }( jQuery ));
-
+*/
 ;(function($) {
     $.datepicker.setRegion = function(region) {
+        /*
         var current = null;
         if (region != null) {
             region = region.replace("_", "-");
@@ -110,6 +111,8 @@
         }
         $.datepicker.setDefaults(current);
         return current;
+        */
+        return $.datepicker.regional['en-US'];
     };
 }( jQuery ));
 

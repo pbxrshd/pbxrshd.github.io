@@ -390,7 +390,7 @@ function g2() {
 <link rel="stylesheet" href="./Data Extract Definition_files/chosen.css" type="text/css" media="screen">
 
 <!-- Used for DatePicker -->
-<script type="text/javascript" src="./Data Extract Definition_files/jquery-ui-1.8.17.i18n.min.js"></script>
+<!-- script type="text/javascript" src="./Data Extract Definition_files/jquery-ui-1.8.17.i18n.min.js"></script> -->
 <script type="text/javascript" src="./Data Extract Definition_files/jquery.acc.datepicker.js"></script>
 <script type="text/javascript">
     var $j = jQuery;
@@ -765,7 +765,7 @@ if(window.Prototype) {
 
     jQuery(document).ready(function() {
         // build a jQueryUI data picker
-        //jQuery.datepicker.setRegion("en_US"); //set region for date picker
+        jQuery.datepicker.setRegion("en-US"); //set region for date picker
 
 
         jQuery('input[type="text"].datepicker').datepicker(
@@ -4033,7 +4033,7 @@ var LOOKUPS = {
                                 <div class="col-md-4 label">is within <i class="fa fa-asterisk"></i></div>
                                 <div class="col-md-8">
                                     <select id="extract_basis_timespan_period" class="form-control" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
-                                        <option value="this day">This Day</option><option value="yesterday">Yesterday</option><option value="this week">This Week</option><option value="last week">Last Week</option><option value="last month">Last Month</option><option value="month to date">Month To Date</option>
+                                        <option value=""></option><option value="this day">This Day</option><option value="yesterday">Yesterday</option><option value="this week">This Week</option><option value="last week">Last Week</option><option value="last month">Last Month</option><option value="month to date">Month To Date</option>
                                     </select>
                                 </div>
                             </div>
