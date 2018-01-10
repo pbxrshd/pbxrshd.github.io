@@ -3888,9 +3888,13 @@ var LOOKUPS = {
                 background-color:#f5f5f5;
             }
             #extract_schedule_section .hint-text {
+                color: #f08080;
+            }
+            #extract_schedule_section .hint-text .hint {
                 font-style: italic;
                 color: #a9a9a9;
             }
+
             #extract_schedule_section div.desc:hover {
                 /*background-color: #f5f5f5;*/
             }
@@ -3898,11 +3902,9 @@ var LOOKUPS = {
             #extract_dialog div.modal-dialog {
                 min-width: 800px;
             }
-
             #extract_dialog div.sub-title {
                 font-weight: bold;
             }
-
             #extract_schedule_dialog div.extract-schedule-type {
                 opacity: 0.5;
                 background-color:#e6e6e6;
@@ -3917,7 +3919,6 @@ var LOOKUPS = {
                 border: 2px solid #0DC4D4;
                 background-color: #fff;
             }
-
             #extract_dialog div.extract-section {
                 border: 1px solid #ddd;
                 padding: 12px 6px 12px 6px;
@@ -3925,7 +3926,6 @@ var LOOKUPS = {
                 margin: 8px 0px 48px 0px;
                 background-color: #f5f5f5;
             }
-
             div.extract-dialog div.modal-header {
                 margin: 12px 0px 12px 0px;
             }
@@ -3943,22 +3943,17 @@ var LOOKUPS = {
                 font-weight: 400;
                 padding: 10px 10px 0px 6px;
             }
-
             #extract_dialog select.time {
                 display: inline;
                 width: 50px;
             }
-
             #extract_schedule_runrepeat_period {
                 display: inline-block;
                 width: auto;
             }
-
-
             ul.switch {
                 margin: 0px 0px -5px 0px;
             }
-
             .switch li>a {
                 border: 1px solid #ccc;
                 border-radius: 0px;
@@ -3988,9 +3983,10 @@ var LOOKUPS = {
                 background-color: inherit;
             }
             #extract_dialog div.tab-content div.hint-text {
-            font-style: italic;
-            color: #a9a9a9;
+                font-style: italic;
+                color: #a9a9a9;
             }
+
         </style>
 
 
@@ -4004,12 +4000,12 @@ var LOOKUPS = {
             <div class="col-md-8" id="extract_schedule_section">
                 <div class="edit-hot-zone">
                     <div class="control-box desc" onclick="SCHDL.UI('edit-schedule')">
-                            <div class="hint-text basis">1. Select the time span of the records to be included. Click to change.</div>
+                            <div class="hint-text basis">1. Select the time span of the records to be included.<i class="fa fa-asterisk"></i> <span class="hint">Click to change.</hint></div>
                             <div class="desc-text basis"></div>
-                            <div class="hint-text schedule">2. Select when the data should be extracted. Click to change.</div>
+                            <div class="hint-text schedule">2. Select when the data should be extracted.<i class="fa fa-asterisk"></i>  <span class="hint">Click to change.</hint></div>
                             <div class="desc-text schedule"></div>
                     </div>
-                    <div><i class="fa fa-edit edit-icon"></i></div>
+                    <div><i class="fa fa-edit edit-icon" onclick="SCHDL.UI('edit-schedule')"></i></div>
                 </div>
             </div>
         </div>
@@ -4025,7 +4021,7 @@ var LOOKUPS = {
                         <div class="sub-title">1.&nbsp; Select the time span of the records to be included</div>
                         <div class="extract-section">
                             <div class="row">
-                                <div class="col-md-4 label">Include records where</div>
+                                <div class="col-md-4 label">Include records where <i class="fa fa-asterisk"></i></div>
                                 <div class="col-md-8">
                                     <select id="extract_basis_column" class="form-control">
                                         <option value="Import Time">Import Time</option><option value="Chargeback Import Time">Chargeback Import Time</option><option value="Order Date">Order Date</option><option value="Order Req Delivery Date">Order Req Delivery Date</option><option value="Time In Queue">Time In Queue</option>
@@ -4034,7 +4030,7 @@ var LOOKUPS = {
                             </div>
                             <div><br /></div>
                             <div class="row">
-                                <div class="col-md-4 label">is within</div>
+                                <div class="col-md-4 label">is within <i class="fa fa-asterisk"></i></div>
                                 <div class="col-md-8">
                                     <select id="extract_basis_timespan_period" class="form-control" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
                                         <option value=""></option><option value="this day">This Day</option><option value="yesterday">Yesterday</option><option value="this week">This Week</option><option value="last week">Last Week</option><option value="last month">Last Month</option><option value="month to date">Month To Date</option>
@@ -4042,7 +4038,7 @@ var LOOKUPS = {
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-4 label">or is between</div>
+                                <div class="col-md-4 label">or is between <i class="fa fa-asterisk"></i></div>
                                 <div class="col-md-8">
                                     <input id="extract_basis_timespan_date1" class="datepicker" type="text" value="" onchange="SCHDL.UI('basis-timespan-changed',event,this)"><img class="ui-datepicker-trigger" src="./Data Extract Definition_files/calendar.png" alt="" title="">
                                     <span class="label">and</span>
@@ -4064,7 +4060,7 @@ var LOOKUPS = {
                                     <div id="extract_schedule_RUNAT" class="tab-pane fade">
                                         <div class="row">
                                             <div class="col-md-4 label">
-                                                Perform the extract on this date
+                                                Perform the extract on this date <i class="fa fa-asterisk"></i>
                                             </div>
                                             <div class="col-md-8">
                                                 <input id="extract_schedule_runat_date" class="datepicker" type="text" value=""><img class="ui-datepicker-trigger" src="./Data Extract Definition_files/calendar.png" alt="" title="">
@@ -4082,7 +4078,7 @@ var LOOKUPS = {
                                     <div id="extract_schedule_RUNREPEAT" class="tab-pane fade">
                                         <div class="row">
                                             <div class="col-md-4 label">
-                                                Repeat the extract this often
+                                                Repeat the extract this often <i class="fa fa-asterisk"></i>
                                             </div>
                                             <div class="col-md-8">
                                                 <select id="extract_schedule_runrepeat_period" class="form-control">
@@ -4101,7 +4097,7 @@ var LOOKUPS = {
                                         <div><br /><br /></div>
                                         <div class="row">
                                             <div class="col-md-4 label">
-                                                Repeat between these dates
+                                                Repeat between these dates <i class="fa fa-asterisk"></i>
                                             </div>
                                             <div class="col-md-8">
                                             <input id="extract_schedule_runrepeat_date1" class="datepicker" type="text" value=""><img class="ui-datepicker-trigger" src="./Data Extract Definition_files/calendar.png" alt="" title="">
