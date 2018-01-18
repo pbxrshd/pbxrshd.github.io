@@ -3787,6 +3787,18 @@ var LOOKUPS = {
                         document.querySelector("#extract_basis_timespan_period").selectedIndex = 0;
                     }
                 }
+                if (id === "edit-what") {
+                    jQuery("#extract_schedule_sectionX div.controls.what").collapse('toggle');
+                }
+                if (id === "edit-when") {
+                    jQuery("#extract_schedule_sectionX div.controls.when").collapse('toggle');
+                }
+                if (id === "blurred") {
+                    console.log("blurring...");
+                }
+
+
+
                 if (id === "schedule-type-clicked") {
                     /*
                     var currentTypeRef = args;
@@ -3962,14 +3974,135 @@ var LOOKUPS = {
             <div class="col-md-8" id="extract_schedule_section">
                 <div class="edit-hot-zone">
                     <div class="control-box desc" onclick="SCHDL.UI('edit-schedule')">
+                        <div>
                             <div class="hint-text basis">1. Select the time span of the records to be included.<i class="fa fa-asterisk"></i> <span class="hint">Click to change.</hint></div>
                             <div class="desc-text basis"></div>
+                        </div>
+                        <div class="">
+
+                        </div>
+                        <div>
                             <div class="hint-text schedule">2. Select when the data should be extracted.<i class="fa fa-asterisk"></i>  <span class="hint">Click to change.</hint></div>
                             <div class="desc-text schedule"></div>
+                        </div>
+                        <div>
+
+                        </div>
                     </div>
                     <div><i class="fa fa-edit edit-icon" onclick="SCHDL.UI('edit-schedule')"></i></div>
                 </div>
             </div>
+        </div>
+
+        <div id="extract_schedule_sectionX" tabindex="0" onblur="SCHDL.UI('blurred')">
+
+            <div class="form-group row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <div class="desc basis" onclick="SCHDL.UI('edit-what')">Select the time span of the records to be included</div>
+                        <div class="controls what collapse">
+                                <div class="extract-section">
+                                    <div class="row">
+                                        <div class="col-md-4 label">Include records where <i class="fa fa-asterisk"></i></div>
+                                        <div class="col-md-8">
+                                            <select id="extract_basis_column" class="form-control">
+                                                <option value="Import Time">Import Time</option><option value="Chargeback Import Time">Chargeback Import Time</option><option value="Order Date">Order Date</option><option value="Order Req Delivery Date">Order Req Delivery Date</option><option value="Time In Queue">Time In Queue</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div><br /></div>
+                                    <div class="row">
+                                        <div class="col-md-4 label">is within </div>
+                                        <div class="col-md-8">
+                                            <select id="extract_basis_timespan_period" class="form-control" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
+                                                <option value=""></option><option value="this day">This Day</option><option value="yesterday">Yesterday</option><option value="this week">This Week</option><option value="last week">Last Week</option><option value="last month">Last Month</option><option value="month to date">Month To Date</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row"><div class="col-md-4 label"><i class="fa fa-asterisk"></i></div></div>
+                                    <div class="row">
+                                        <div class="col-md-4 label">or is between </div>
+                                        <div class="col-md-8">
+                                            <input id="extract_basis_timespan_date1" class="datepicker" type="text" value="" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
+                                            <span class="label">and</span>
+                                            <input id="extract_basis_timespan_date2" class="datepicker" type="text" value="" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
+                                        </div>
+                                    </div>
+                                </div><!-- .extract-section -->
+                        </div>
+                    </div>
+            </div>
+
+            <div class="form-group row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <div class="desc basis" onclick="SCHDL.UI('edit-when')">Select when the data should be extracted</div>
+                        <div class="controls when collapse">
+                                <div class="extract-section">
+                                        <ul class="nav nav-pills switch">
+                                                <li data-schedule-type="RUNASAP" class="active"><a data-toggle="pill" href="#extract_schedule_RUNASAP">As soon as possible</a></li>
+                                                <li data-schedule-type="RUNAT"><a data-toggle="pill" href="#extract_schedule_RUNAT">At a specific time</a></li>
+                                                <li data-schedule-type="RUNREPEAT"><a data-toggle="pill" href="#extract_schedule_RUNREPEAT">Repeatedly</a></li>
+                                        </ul>
+                                        <div class="tab-content">
+                                                <div id="extract_schedule_RUNASAP" class="tab-pane fade in active">
+                                                <div class="hint-text">Perform the extraction as soon as possible</div>
+                                                </div>
+                                                <div id="extract_schedule_RUNAT" class="tab-pane fade">
+                                                    <div class="row">
+                                                        <div class="col-md-4 label">
+                                                            Perform the extract on this date <i class="fa fa-asterisk"></i>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <input id="extract_schedule_runat_date" class="datepicker" type="text" value="">
+                                                            at
+                                                            <select id="extract_schedule_runat_hour" class="form-control time">
+                                                                <option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
+                                                            </select>
+                                                                :
+                                                            <select id="extract_schedule_runat_minute" class="form-control time">
+                                                                <option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="extract_schedule_RUNREPEAT" class="tab-pane fade">
+                                                    <div class="row">
+                                                        <div class="col-md-4 label">
+                                                            Repeat the extract this often <i class="fa fa-asterisk"></i>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <select id="extract_schedule_runrepeat_period" class="form-control">
+                                                                <option value=""></option><option value="daily">Daily</option><option value="bi-daily">Bidaily</option><option value="weekly">Weekly</option><option value="bi-weekly">Biweekly</option><option value="monthly">Monthly</option>
+                                                            </select>
+                                                            at
+                                                            <select id="extract_schedule_runrepeat_hour" class="form-control time">
+                                                                    <option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
+                                                                </select>
+                                                                    :
+                                                                <select id="extract_schedule_runrepeat_minute" class="form-control time">
+                                                                    <option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div><br /><br /></div>
+                                                    <div class="row">
+                                                        <div class="col-md-4 label">
+                                                            Repeat between these dates <i class="fa fa-asterisk"></i>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                        <input id="extract_schedule_runrepeat_date1" class="datepicker" type="text" value="">
+                                                        <span class="label">and</span>
+                                                        <input id="extract_schedule_runrepeat_date2" class="datepicker" type="text" value="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div><!-- .extract-section -->
+                        </div>
+                    </div>
+            </div>
+
         </div>
 
         <div id="extract_dialog" class="modal fade extract-dialog" tabindex="-1">
