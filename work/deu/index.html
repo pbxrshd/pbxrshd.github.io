@@ -3575,8 +3575,33 @@ var LOOKUPS = {
             };
             //
             function init() {
-                updateViewFromModel(getModel());
-                updateDescription(getModel());
+                //updateViewFromModel(getModel()); // TODO implement this...
+                updateScheduleDescription(getModel());
+                updateBasisDescription(getModel());
+
+                var baseOptions = { changeMonth: true,
+                    changeYear: true,
+                    showOn: "both",
+                    buttonImage: "./Data Extract Definition_files/calendar.png",
+                    buttonText: "",
+                    buttonImageOnly: true
+                };
+                var options = null;
+                options = JSON.parse(JSON.stringify(baseOptions));
+                options.minDate = 0;
+                options.maxDate = "+1Y";
+                jQuery("#extract_schedule_runat_date").datepicker(options);
+                //
+                options = JSON.parse(JSON.stringify(baseOptions));
+                options.minDate = 0;
+                options.maxDate = "+1Y";
+                jQuery("#extract_schedule_runrepeat_date1").datepicker(options);
+                //
+                options = JSON.parse(JSON.stringify(baseOptions));
+                options.minDate = 0;
+                options.maxDate = "+1Y";
+                jQuery("#extract_schedule_runrepeat_date2").datepicker(options);
+
             }
             //
             function getModel() {
@@ -3586,21 +3611,35 @@ var LOOKUPS = {
             function setModel(model) {
                 EXTRACT = model;
             }
+
             //
-            function updateDescription(model) {
-                if (validateModelForBasis(model)) {
-                    document.querySelector("#extract_schedule_section div.hint-text.basis").style.display = "none";
-                    document.querySelector("#extract_schedule_section div.desc-text.basis").textContent = getBasisDescription(model);
-                } else {
-                    document.querySelector("#extract_schedule_section div.hint-text.basis").style.display = "";
-                    document.querySelector("#extract_schedule_section div.desc-text.basis").textContent = "";
-                }
+            function updateScheduleDescription(model) {
+                var titleRef = document.querySelector("#extract_schedule_section div.schedule-section div.title");
+                var reqdRef = document.querySelector("#extract_schedule_section div.schedule-section .reqd");
+                var descRef = document.querySelector("#extract_schedule_section div.schedule-section div.description");
                 if (validateModelForSchedule(model)) {
-                    document.querySelector("#extract_schedule_section div.hint-text.schedule").style.display = "none";
-                    document.querySelector("#extract_schedule_section div.desc-text.schedule").textContent = getScheduleDescription(model);
+                    titleRef.classList.remove("warn");
+                    reqdRef.classList.add("hide");
+                    descRef.innerHTML = getScheduleDescription(model);
                 } else {
-                    document.querySelector("#extract_schedule_section div.hint-text.schedule").style.display = "";
-                    document.querySelector("#extract_schedule_section div.desc-text.schedule").textContent = "";
+                    titleRef.classList.add("warn");
+                    reqdRef.classList.remove("hide");
+                    descRef.textContent = "";
+                }
+            }
+            //
+            function updateBasisDescription(model) {
+                var titleRef = document.querySelector("#extract_schedule_section div.basis-section div.title");
+                var reqdRef = document.querySelector("#extract_schedule_section div.basis-section .reqd");
+                var descRef = document.querySelector("#extract_schedule_section div.basis-section div.description");
+                if (validateModelForBasis(model)) {
+                    titleRef.classList.remove("warn");
+                    reqdRef.classList.add("hide");
+                    descRef.textContent = getBasisDescription(model);
+                } else {
+                    titleRef.classList.add("warn");
+                    reqdRef.classList.remove("hide");
+                    descRef.textContent = "";
                 }
             }
             //
@@ -3617,20 +3656,55 @@ var LOOKUPS = {
             }
             //
             function getScheduleDescription(model) {
-                var desc = "The Data Extract is scheduled to run ";
+                var desc = "";
                 switch (model.schedule.type) {
                     case "RUNASAP":
-                        desc += "as soon as possible";
+                        desc += "The Data Extract will run as soon as possible.";
                     break;
                     case "RUNAT":
-                        desc += "on " + model.schedule.timespan.date1 + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute;
+                        desc += "The Data Extract will run on " + model.schedule.timespan.date1 + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute+ ".";
                     break;
                     case "RUNREPEAT":
-                        desc += model.schedule.timespan.period + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute;
-                        desc += ", beginning on " + model.schedule.timespan.date1 + " and ending on " + model.schedule.timespan.date2;
+                        desc += "The Data Extract is scheduled to run " + model.schedule.timespan.period + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute;
+                        desc += ", beginning on " + model.schedule.timespan.date1 + " and ending on " + model.schedule.timespan.date2 + ".";
+                        desc += '<button type="button" class="btn btn-link" data-toggle="modal" data-target="#extract_schedule_section div.modal">See extract dates</button>';
                     break;
                 }
-                return desc + ".";
+                return desc;
+            }
+            //
+            function updateModelScheduleFromView(model) {
+                model.schedule.type = document.querySelector("#extract_schedule_section li.active").getAttribute("data-schedule-type");
+                switch (model.schedule.type) {
+                    case "RUNASAP":
+                        model.schedule.timespan.period = "";
+                        model.schedule.timespan.date1 = "";
+                        model.schedule.timespan.date2 = "";
+                        model.schedule.timespan.hour = "";
+                        model.schedule.timespan.minute = "";
+                    break;
+                    case "RUNAT":
+                        model.schedule.timespan.period = "";
+                        model.schedule.timespan.date1 = document.querySelector("#extract_schedule_runat_date").value;
+                        model.schedule.timespan.date2 = "";
+                        model.schedule.timespan.hour = document.querySelector("#extract_schedule_runat_hour").value;
+                        model.schedule.timespan.minute = document.querySelector("#extract_schedule_runat_minute").value;
+                    break;
+                    case "RUNREPEAT":
+                        model.schedule.timespan.period = document.querySelector("#extract_schedule_runrepeat_period")[document.querySelector("#extract_schedule_runrepeat_period").selectedIndex].value;;
+                        model.schedule.timespan.date1 = document.querySelector("#extract_schedule_runrepeat_date1").value;
+                        model.schedule.timespan.date2 = document.querySelector("#extract_schedule_runrepeat_date2").value;
+                        model.schedule.timespan.hour = document.querySelector("#extract_schedule_runrepeat_hour").value;
+                        model.schedule.timespan.minute = document.querySelector("#extract_schedule_runrepeat_minute").value;
+                    break;
+                }
+            }
+            //
+            function updateModelBasisFromView(model) {
+                model.basis.column = document.querySelector("#extract_basis_column")[document.querySelector("#extract_basis_column").selectedIndex].value;
+                model.basis.timespan.period = document.querySelector("#extract_basis_timespan_period")[document.querySelector("#extract_basis_timespan_period").selectedIndex].value;
+                model.basis.timespan.date1 = document.querySelector("#extract_basis_timespan_date1").value;
+                model.basis.timespan.date2 = document.querySelector("#extract_basis_timespan_date2").value;
             }
             //
             function updateModelFromView(model) {
@@ -3750,29 +3824,37 @@ var LOOKUPS = {
             }
             // dispatcher for all UI events related to the SCHDL
             function UI(id, event, args) {
-                if (id === "edit-schedule") {
-                    //updateViewFromModel(getModel());
-                    jQuery('#extract_dialog').modal({backdrop:'static', keyboard:false, show:true});
+                if (id === "schedule-type-clicked") {
+                    var currentScheduleType = args;
+                    var currentTypeRef = document.querySelector("#extract_schedule_section li[data-schedule-type='" + currentScheduleType + "']");
+                    if (currentTypeRef.classList.contains("active")) { // already active, nothing to do
+                        return;
+                    }
+                    // set previously active type row to inactive
+                    var typeRef = document.querySelector("#extract_schedule_section li[data-schedule-type].active");
+                    if (typeRef) {
+                        typeRef.classList.remove("active");
+                        var scheduleType = typeRef.getAttribute("data-schedule-type");
+                        var tabRef = document.querySelector("#extract_schedule_" + scheduleType);
+                        tabRef.classList.remove("show");
+                        tabRef.classList.add("hide");
+                    }
+                    // make currentRef active
+                    currentTypeRef.classList.add("active");
+                    var tabRef = document.querySelector("#extract_schedule_" + currentScheduleType);
+                    tabRef.classList.remove("hide");
+                    tabRef.classList.add("show");
+                    //
+                    updateModelScheduleFromView(getModel());
+                    updateScheduleDescription(getModel());
                 }
-                if (id === "save-basis") {
-                    //updateModelFromView(getModel());
-                    //updateViewFromModel(getModel()); // sync changes
-                    //updateDescription(getModel());
-                    //jQuery('#extract_basis_dialog').modal("hide");
+                if (id === "schedule-field-changed") {
+                    updateModelScheduleFromView(getModel());
+                    updateScheduleDescription(getModel());
                 }
-                if (id === "save-schedule") {
-                    updateModelFromView(getModel());
-                    updateViewFromModel(getModel()); // sync changes
-                    updateDescription(getModel());
-                    jQuery('#extract_dialog').modal("hide");
-                }
-                if (id === "cancel-basis") {
-                    //updateViewFromModel(getModel()); // rollback changes
-                    //jQuery('#extract_basis_dialog').modal("hide");
-                }
-                if (id === "cancel-schedule") {
-                    updateViewFromModel(getModel()); // rollback changes
-                    jQuery('#extract_dialog').modal("hide");
+                if (id === "basis-field-changed") {
+                    updateModelBasisFromView(getModel());
+                    updateBasisDescription(getModel());
                 }
                 if (id === "basis-timespan-changed") {
                     var ref = args;
@@ -3786,28 +3868,9 @@ var LOOKUPS = {
                     } else if (ref.id === "extract_basis_timespan_date2" && document.querySelector("#extract_basis_timespan_date2").value) {
                         document.querySelector("#extract_basis_timespan_period").selectedIndex = 0;
                     }
+                    updateModelBasisFromView(getModel());
+                    updateBasisDescription(getModel());
                 }
-                if (id === "schedule-type-clicked") {
-                    /*
-                    var currentTypeRef = args;
-                    if (currentTypeRef.classList.contains("active")) { // already active, nothing to do
-                        return;
-                    }
-                    // set previously active type row to inactive
-                    var typeRef = document.querySelector("#extract_dialog div.extract-schedule-type.active");
-                    if (typeRef) {
-                        typeRef.classList.remove("active");
-                    }
-                    // make currentRef active
-                    var radioRef = currentTypeRef.querySelector("input.rb");
-                    if (!radioRef.checked) {
-                        radioRef.checked = true;
-                    }
-                    currentTypeRef.classList.add("active");
-                    */
-                }
-
-
             }
             //
             return {
@@ -3821,23 +3884,11 @@ var LOOKUPS = {
 
 
         <style>
-
+/*
             #extract_schedule_section {
-            /*
-            color: #555;
-            background-color: #E0F2F1;
-            border: 2px solid #0DC4D4;
-            border-radius: 4px;
-            */
-            /*
-            padding: 6px 12px 6px 12px;
-            font-size: 14px;
-                */
+
             }
             #extract_schedule_section .section {
-                /*
-            padding: 4px 0px 4px 0px;
-            */
             }
             #extract_schedule_section div.desc {
                 margin: 0px 0px 6px 0px;
@@ -3858,7 +3909,6 @@ var LOOKUPS = {
             }
 
             #extract_schedule_section div.desc:hover {
-                /*background-color: #f5f5f5;*/
             }
 
             #extract_dialog div.modal-dialog {
@@ -3948,7 +3998,67 @@ var LOOKUPS = {
                 font-style: italic;
                 color: #a9a9a9;
             }
+*/
 
+            #extract_schedule_section div.title {
+                color: #999;
+                font-weight: normal;
+                margin-left: 10px;
+            }
+            #extract_schedule_section div.title.warn {
+                color: red;
+                font-weight: bold;
+            }
+            #extract_schedule_section div.description {
+                color: #434040;
+                font-weight: bold;
+                font-style: italic;
+                margin-left: 16px;
+            }
+            #extract_schedule_section div.hint-text {
+                color:#999;
+                font-style: italic;
+            }
+            #extract_schedule_section ul.switch {
+                margin-left: 0px;
+            }
+            #extract_schedule_section label.control-label {
+                text-transform: unset;
+            }
+            #extract_schedule_section .switch li:first-of-type>a {
+                border-radius: 4px 0px 0px 4px;
+            }
+
+            #extract_schedule_section .switch li>a {
+                border: 1px solid #ccc;
+                margin: 0px -3px 0px 0px;
+            }
+            #extract_schedule_section .switch li.active>a {
+                background-color: #0DC4D4;
+                box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+            }
+            #extract_schedule_section .switch li:last-of-type>a {
+                border-radius: 0px 4px 4px 0px;
+            }
+            #extract_schedule_section div.extract-section {
+                margin: 20px 0px 0px 0px;
+            }
+            #extract_schedule_section div.basis-section {
+                margin: 20px 0px 0px 0px;
+            }
+            #extract_schedule_section select.time {
+                display: inline;
+                width: 50px;
+            }
+            #extract_schedule_runrepeat_period {
+                display: inline-block;
+                width: auto;
+            }
+            #extract_schedule_section span.or {
+                font-weight: bold;
+                text-transform: uppercase;
+                padding: 0px 12px 0px 20px;
+            }
         </style>
 
 
@@ -3957,136 +4067,129 @@ var LOOKUPS = {
         <!-- Schedule -->
 
         <!-- #################################################################################################################################################################################### -->
-        <div class="form-group row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8" id="extract_schedule_section">
-                <div class="edit-hot-zone">
-                    <div class="control-box desc" onclick="SCHDL.UI('edit-schedule')">
-                            <div class="hint-text basis">1. Select the time span of the records to be included.<i class="fa fa-asterisk"></i> <span class="hint">Click to change.</hint></div>
-                            <div class="desc-text basis"></div>
-                            <div class="hint-text schedule">2. Select when the data should be extracted.<i class="fa fa-asterisk"></i>  <span class="hint">Click to change.</hint></div>
-                            <div class="desc-text schedule"></div>
-                    </div>
-                    <div><i class="fa fa-edit edit-icon" onclick="SCHDL.UI('edit-schedule')"></i></div>
-                </div>
-            </div>
-        </div>
 
-        <div id="extract_dialog" class="modal fade extract-dialog" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="btn btn-sm btn-default" onclick="SCHDL.UI('cancel-schedule')"><i class="fa fa-close fa-lg"></i> Cancel</button>
-                        <div class="modal-title"><label>Schedule</label></div>
-                    </div>
-                    <div class="modal-body">
-                        <div class="sub-title">1.&nbsp; Select the time span of the records to be included</div>
-                        <div class="extract-section">
-                            <div class="row">
-                                <div class="col-md-4 label">Include records where <i class="fa fa-asterisk"></i></div>
-                                <div class="col-md-8">
-                                    <select id="extract_basis_column" class="form-control">
-                                        <option value="Import Time">Import Time</option><option value="Chargeback Import Time">Chargeback Import Time</option><option value="Order Date">Order Date</option><option value="Order Req Delivery Date">Order Req Delivery Date</option><option value="Time In Queue">Time In Queue</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div><br /></div>
-                            <div class="row">
-                                <div class="col-md-4 label">is within </div>
-                                <div class="col-md-8">
-                                    <select id="extract_basis_timespan_period" class="form-control" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
-                                        <option value=""></option><option value="this day">This Day</option><option value="yesterday">Yesterday</option><option value="this week">This Week</option><option value="last week">Last Week</option><option value="last month">Last Month</option><option value="month to date">Month To Date</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row"><div class="col-md-4 label"><i class="fa fa-asterisk"></i></div></div>
-                            <div class="row">
-                                <div class="col-md-4 label">or is between </div>
-                                <div class="col-md-8">
-                                    <input id="extract_basis_timespan_date1" class="datepicker" type="text" value="" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
-                                    <span class="label">and</span>
-                                    <input id="extract_basis_timespan_date2" class="datepicker" type="text" value="" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
-                                </div>
-                            </div>
-                        </div><!-- .extract-section -->
-                        <div class="sub-title">2.&nbsp; Select when the data should be extracted</div>
-                        <div class="extract-section">
+
+        <div id="extract_schedule_section" class="">
+            <div class="schedule-section">
+                <div class="title">When should the data be extracted <i class="fa fa-asterisk reqd"></i></div>
+                <div class="description"></div>
+                <div class="extract-section">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
                             <ul class="nav nav-pills switch">
-                                    <li data-schedule-type="RUNASAP" class="active"><a data-toggle="pill" href="#extract_schedule_RUNASAP">As soon as possible</a></li>
-                                    <li data-schedule-type="RUNAT"><a data-toggle="pill" href="#extract_schedule_RUNAT">At a specific time</a></li>
-                                    <li data-schedule-type="RUNREPEAT"><a data-toggle="pill" href="#extract_schedule_RUNREPEAT">Repeatedly</a></li>
+                                <li data-schedule-type="RUNASAP" class="active"><a onclick="SCHDL.UI('schedule-type-clicked',event,'RUNASAP');return false;" href="#">As soon as possible</a></li>
+                                <li data-schedule-type="RUNAT"><a onclick="SCHDL.UI('schedule-type-clicked',event,'RUNAT');return false;" href="#">One time, in the future</a></li>
+                                <li data-schedule-type="RUNREPEAT"><a onclick="SCHDL.UI('schedule-type-clicked',event,'RUNREPEAT');return false;" href="#">Repeatedly</a></li>
                             </ul>
                             <div class="tab-content">
-                                    <div id="extract_schedule_RUNASAP" class="tab-pane fade in active">
-                                    <div class="hint-text">Perform the extraction as soon as possible</div>
+                                    <div id="extract_schedule_RUNASAP" class="show">
+                                        <div class="hint-text">Perform the extraction as soon as possible</div>
                                     </div>
-                                    <div id="extract_schedule_RUNAT" class="tab-pane fade">
+                                    <div id="extract_schedule_RUNAT" class="hide">
                                         <div class="row">
-                                            <div class="col-md-4 label">
+                                            <label class="col-md-4 control-label">
                                                 Perform the extract on this date <i class="fa fa-asterisk"></i>
-                                            </div>
+                                            </label>
                                             <div class="col-md-8">
-                                                <input id="extract_schedule_runat_date" class="datepicker" type="text" value="">
+                                                <input id="extract_schedule_runat_date" class="datepicker" type="text" value="" onchange="SCHDL.UI('schedule-field-changed')">
                                                 at
-                                                <select id="extract_schedule_runat_hour" class="form-control time">
+                                                <select id="extract_schedule_runat_hour" class="form-control time" onchange="SCHDL.UI('schedule-field-changed')">
                                                     <option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
                                                 </select>
                                                     :
-                                                <select id="extract_schedule_runat_minute" class="form-control time">
+                                                <select id="extract_schedule_runat_minute" class="form-control time" onchange="SCHDL.UI('schedule-field-changed')">
                                                     <option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="extract_schedule_RUNREPEAT" class="tab-pane fade">
+                                    <div id="extract_schedule_RUNREPEAT" class="hide">
                                         <div class="row">
-                                            <div class="col-md-4 label">
+                                            <label class="col-md-4 control-label">
                                                 Repeat the extract this often <i class="fa fa-asterisk"></i>
-                                            </div>
+                                            </label>
                                             <div class="col-md-8">
-                                                <select id="extract_schedule_runrepeat_period" class="form-control">
+                                                <select id="extract_schedule_runrepeat_period" class="form-control" onchange="SCHDL.UI('schedule-field-changed')">
                                                     <option value=""></option><option value="daily">Daily</option><option value="bi-daily">Bidaily</option><option value="weekly">Weekly</option><option value="bi-weekly">Biweekly</option><option value="monthly">Monthly</option>
                                                 </select>
                                                 at
-                                                <select id="extract_schedule_runrepeat_hour" class="form-control time">
+                                                <select id="extract_schedule_runrepeat_hour" class="form-control time" onchange="SCHDL.UI('schedule-field-changed')">
                                                         <option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
-                                                    </select>
+                                                </select>
                                                         :
-                                                    <select id="extract_schedule_runrepeat_minute" class="form-control time">
+                                                <select id="extract_schedule_runrepeat_minute" class="form-control time" onchange="SCHDL.UI('schedule-field-changed')">
                                                         <option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div><br /><br /></div>
+                                        <br />
                                         <div class="row">
-                                            <div class="col-md-4 label">
-                                                Repeat between these dates <i class="fa fa-asterisk"></i>
-                                            </div>
+                                            <label class="col-md-4 control-label">
+                                                Schedule the extracts to start on <i class="fa fa-asterisk"></i>
+                                            </label>
                                             <div class="col-md-8">
-                                            <input id="extract_schedule_runrepeat_date1" class="datepicker" type="text" value="">
-                                            <span class="label">and</span>
-                                            <input id="extract_schedule_runrepeat_date2" class="datepicker" type="text" value="">
+                                                <input id="extract_schedule_runrepeat_date1" class="datepicker" type="text" value="" onchange="SCHDL.UI('schedule-field-changed')">
                                             </div>
                                         </div>
+                                        <br />
+                                        <div class="row">
+                                            <label class="col-md-4 control-label">
+                                                Schedule the extracts to end on <i class="fa fa-asterisk"></i>
+                                            </label>
+                                            <div class="col-md-8">
+                                                <input id="extract_schedule_runrepeat_date2" class="datepicker" type="text" value="" onchange="SCHDL.UI('schedule-field-changed')">
+                                            </div>
+                                        </div>
+
                                     </div>
                             </div>
-                        </div><!-- .extract-section -->
-                    </div><!-- .modal-body -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="SCHDL.UI('save-schedule')"><i class="fa fa-check fa-lg"></i> Save Changes</button>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div><!-- extract_dialog -->
+                </div><!-- .extract-section -->
+            </div><!-- .schedule-section -->
+            <br /><br />
+            <div class="basis-section">
+                <div class="title">How should the timespan of the records be calculated <i class="fa fa-asterisk reqd"></i></div>
+                <div class="description"></div>
+                <div class="extract-section">
+                    <div class="row">
+                        <label class="col-md-2 control-label">Include records where <i class="fa fa-asterisk"></i></label>
+                        <div class="col-md-4">
+                            <select id="extract_basis_column" class="form-control" onchange="SCHDL.UI('basis-field-changed')">
+                                <option value="Import Time">Import Time</option><option value="Chargeback Import Time">Chargeback Import Time</option><option value="Order Date">Order Date</option><option value="Order Req Delivery Date">Order Req Delivery Date</option><option value="Time In Queue">Time In Queue</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div><br /></div>
+                    <div class="row">
+                        <label class="col-md-2 control-label">is within <i class="fa fa-asterisk"></i></label>
+                        <div class="col-md-4">
+                            <select id="extract_basis_timespan_period" class="form-control" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
+                                <option value=""></option><option value="this day">This Day</option><option value="yesterday">Yesterday</option><option value="this week">This Week</option><option value="last week">Last Week</option><option value="last month">Last Month</option><option value="month to date">Month To Date</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="or"> or </span>is between
+                            <input id="extract_basis_timespan_date1" class="datepicker" type="text" value="" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
+                            and
+                            <input id="extract_basis_timespan_date2" class="datepicker" type="text" value="" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
+                        </div>
+                        <br /><br/><br/>
+                    </div>
+
+                </div><!-- .extract-section -->
+            </div><!-- .basis-section -->
+
+            <div class="modal fade" tabindex="-1" role="dialog"><img src="./Data Extract Definition_files/extractdates.jpg" onclick="jQuery('#extract_schedule_section div.modal').modal('hide')" /></div>
+
+        </div><!-- extract_schedule_section -->
 
         <!-- #################################################################################################################################################################################### -->
 
     </div>
+
 </div><!-- .tl-section schedule -->
-
-
-
-
 
 
 
@@ -4358,7 +4461,7 @@ var LOOKUPS = {
         </div>
 
         <script>
-            //SCHDL.init();
+            SCHDL.init();
             //FLTR.renderDefinitions();
         </script>
 
