@@ -3605,12 +3605,6 @@ var LOOKUPS = {
                 jQuery("#extract_schedule_runrepeat_date2").datepicker(options);
                 jQuery("#extract_schedule_runrepeat_date2").datepicker("setDate", "+6m");
                 //
-
-                /*
-                <select id="extract_basis_timespan_period" class="form-control" onchange="SCHDL.UI('basis-timespan-changed',event,this)">
-                                <option value=""></option><option value="this day">This Day</option><option value="yesterday">Yesterday</option><option value="this week">Week To Date</option><option value="last week">Last Week</option><option value="last month">Last Month</option><option value="month to date">Month To Date</option>
-                </select>
-                */
             }
             //
             function getModel() {
@@ -3673,10 +3667,10 @@ var LOOKUPS = {
                         desc += "The Data Extract will run as soon as possible.";
                     break;
                     case "RUNAT":
-                        desc += "The Data Extract will run on " + model.schedule.timespan.date1 + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute+ ".";
+                        desc += "The Data Extract will run one time on " + model.schedule.timespan.date1 + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute+ ".";
                     break;
                     case "RUNREPEAT":
-                        desc += "The Data Extract is scheduled to run " + model.schedule.timespan.period + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute;
+                        desc += "The Data Extract is scheduled to repeat " + model.schedule.timespan.period + " at " + model.schedule.timespan.hour + ":" + model.schedule.timespan.minute;
                         desc += ", beginning on " + model.schedule.timespan.date1 + " and ending on " + model.schedule.timespan.date2 + ".";
                         //desc += '<button type="button" class="btn btn-link" data-toggle="modal" data-target="#extract_schedule_section div.modal">See extract dates</button>';
                         document.querySelector("#extract_schedule_runrepeat_dates").classList.remove("hide");
@@ -4024,23 +4018,18 @@ var LOOKUPS = {
                                         </div>
                                         <br />
                                         <div class="row">
-                                            <label class="col-md-4 control-label">
-                                                Schedule the extracts to start on <i class="fa fa-asterisk"></i>
-                                            </label>
+                                            <label class="col-md-4 control-label">The extract will run for the first time on <i class="fa fa-asterisk"></i></label>
                                             <div class="col-md-8">
                                                 <input id="extract_schedule_runrepeat_date1" class="datepicker" type="text" value="" onchange="SCHDL.UI('schedule-field-changed')">
                                             </div>
                                         </div>
                                         <br />
                                         <div class="row">
-                                            <label class="col-md-4 control-label">
-                                                Schedule the extracts to end on <i class="fa fa-asterisk"></i>
-                                            </label>
+                                            <label class="col-md-4 control-label">The extracts will repeat until  <i class="fa fa-asterisk"></i></label>
                                             <div class="col-md-8">
                                                 <input id="extract_schedule_runrepeat_date2" class="datepicker" type="text" value="" onchange="SCHDL.UI('schedule-field-changed')">
                                             </div>
                                         </div>
-
                                     </div>
                             </div>
                         </div>
