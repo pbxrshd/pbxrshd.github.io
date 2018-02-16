@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+  <title>Hermes - Raptors</title>
+  <link rel="stylesheet" href="res/css/site.css">
+  <script src="res/js/data.js"></script>
+  <script src="res/js/site.js"></script>
+
+</head>
+<body id="raptors">
+
+  <div id="main_header" class="fixed-header">
+    <div class="header-left"><img src="res/img/main-menu.png" id="main_menu_icon" onclick="UI.event('main_menu_icon')" class="header-icon" /></div>
+    <div class="header-center">RAPTORS</div>
+    <div class="header-right header-placeholder"></div>
+  </div>
+
+  <div class="body-section">
+    <div id="raptors-list">
+    </div>
+
+  <div id="main_menu" class="hide" onclick="UI.event('main_menu_item', event)">
+    <a href="#" class="main-menu-item">Schedule</a>
+    <a href="#" class="main-menu-item">Reports</a>
+    <a href="#" class="main-menu-item">Settings</a>
+    <a href="#" class="main-menu-item">Help</a>
+  </div>
+
+</div><!-- body-section  -->
+
+<script>
+  try {
+  UI.init("Raptors");
+  } catch (e) {
+    alert(e);
+  }
+</script>
+</body>
+</html>
