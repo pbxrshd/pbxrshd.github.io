@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+    
+    <style>
+     body {
+       margin:10px 10px 0px 24px;
+     }
+
+     .color1 {
+           fill: #90CD97;
+        }
+     .color2 {
+           fill: #88BDE6;
+        }
+     .color3 {
+           fill: #F07E6E;
+        }        
+        
+     th {
+       text-align:center;
+     }
+
+     th.s, th.cat, th.gv {
+       background-color:#c0c0c0;
+       padding:6px 8px 6px 8px;
+     }
+     th.c, th.d, th.p {
+       background-color:#e8e8e8;
+     }
+     
+     tr.rr {
+       background-color:#f8f8f8;
+       border:2px solid #c0c0c0;
+       font-weight:bold;
+     }
+     
+     td {
+       padding:4px 8px 4px 8px;
+       text-align:right;
+     }
+     
+     td.s {
+       text-align:center;
+       font-weight:bold;
+       background-color:#e8e8e8;
+     }
+     
+     td.gv {
+       padding:10px 10px 4px 4px;
+     }
+     th.gl-cat {
+       font-weight:normal;
+       font-style:italic;
+     }
+        
+    </style>
+
+    <script>
+    var CATEGORIES = ['ACCEPT','REVIEW','REJECT'];
+    var BANDS =             [900,     600];
+    var DATA = [];
+    var RULE_SCORE = 0;
+    var EXECUTION_COUNT = 1000000;
+
+    var currentScores = [];
+    
+    var COLORS = ['color1', 'color2', 'color3'];
+
+    /*
+      returns array of ints of size count, having random numbers between minValue and maxValue
+    */
+    function makeFakeData(minValue, maxValue, count) {
+      var data = []; 
+      var range = maxValue - minValue;
+      for (var i = 0; i < count; i++) {
+        data.push(minValue + Math.floor((Math.random() * range) + 1));
+      };
+      return data;
+    }
+    
+    function init() {
+      RULE_SCORE = parseInt(document.querySelector('#current_score').innerText);
+      document.querySelector('#score_from').value = RULE_SCORE - 100;
+      document.querySelector('#score_to').value = RULE_SCORE + 100;
+
+      console.time("makeFakeData");
+      document.querySelector('#exec_count').innerText = EXECUTION_COUNT;
+      DATA = makeFakeData(0, 1000, EXECUTION_COUNT);
+      console.timeEnd("makeFakeData");
+      
+    }
+    
+    /**
+      returns array of values in range startValue to endValue, sampled at stepSize
+      returns the array sorted in ascending order
+      always includes startValue and endValue
+      will also include includeValue, if it is passed in
+      expects all args to be ints
+    */
+    function generateSteps(startValue, endValue, stepSize, includeValue) {
+      var values = [];
+      if (isNaN(endValue)) { // only one step to compare to
+        values.push(startValue);
+      } else { // generate a series of steps
+        for (var i = startValue; i < endValue; i=i+stepSize) {
+          values.push(i);
+        }
+        values.push(endValue);
+      }
+      
+      if (includeValue && values.indexOf(includeValue) === -1) {
+        values.push(includeValue);
+        values.sort(function(a,b){return a - b});
+      }
+      return values;
+    }
+
+    function calc() {
+      currentScores = generateSteps(parseInt(document.querySelector('#score_from').value),
+                                    parseInt(document.querySelector('#score_to').value),
+                                    parseInt(document.querySelector('#score_step').value),
+                                    RULE_SCORE);
+      var ruleScoreIndex = currentScores.indexOf(RULE_SCORE);
+      
+      var dataDiv = d3.select('#data1');
+      // clear, for recalcs
+      dataDiv.text(null); 
+      
+      // table
+      var tableRef = dataDiv
+          .append('table')
+          .attr('id','data-table')
+          .attr('class','table-bordered table-hover');
+      // header
+      var tbodyRef = tableRef.append('tbody');
+      var trRef = tbodyRef.append('tr').attr('class','sec-hdr');
+      trRef.append('th').attr({class:'s',rowspan:2}).text('Score');
+      CATEGORIES.forEach( function(d,i) {
+        var thRef = trRef.append('th').attr({class:'cat',colspan:3})
+        thRef.append('div').attr({class:''}).text(d);
+        thRef.append('div').text(formatScoreBand(BANDS, i));
+      });
+      trRef.append('th').attr({rowspan:2}).text(' ');
+      trRef.append('th').attr({class:'gv',colspan:1+CATEGORIES.length}).text('Distribution of counts');
+      //
+      trRef = tbodyRef.append('tr');
+      CATEGORIES.forEach( function(d,i) {
+        trRef.append('th').attr({class:'c'}).text('count');
+        trRef.append('th').attr({class:'d'}).text('change');
+        trRef.append('th').attr({class:'p'}).text('% change');
+      });
+      
+      CATEGORIES.forEach(function(d,i) {
+        var thRef = trRef.append('th')
+          .attr({class:'gl-cat'})
+          .append('div').attr({class:''}).text(d);
+        thRef.append('div').attr({id:'gl_'+i})
+        drawSwatch(document.getElementById('gl_'+i), COLORS[i]);
+      });
+      
+      trRef.append('th');
+      
+      // data cells
+      var initialBuckets = bucketize(DATA, BANDS, 0);
+      tbodyRef = tableRef.append('tbody');
+      for (var i = 0; i < currentScores.length; i++) {
+        var currentScore = currentScores[i];
+        trRef = tbodyRef.append('tr').attr('class', function() {return (i===ruleScoreIndex)?'dr rr':'dr'});
+        trRef.append('td').attr({class:'s'}).text(currentScore);
+        var adjustment = currentScore - RULE_SCORE;
+        var buckets = bucketize(DATA, BANDS, adjustment);
+        buckets.forEach(function(d,j) {
+          trRef.append('td').attr({class:'c'}).text(d);// count
+          var delta = buckets[j] - initialBuckets[j];
+          trRef.append('td').attr({class:'d'}).text(delta);
+          var percentChange = (100 * delta/initialBuckets[j]).toFixed(2);
+          trRef.append('td').attr({class:'p'}).text(percentChange + '%');
+        });
+        //
+        trRef.append('td');
+        //
+        buckets.forEach(function(d,j) {
+          var percentDist = (100 * d/EXECUTION_COUNT).toFixed(2);
+          trRef.append('td').attr({class:''}).text(percentDist + '%');
+        });
+        // draw graphs
+        trRef.append('td').attr({id:'gv_'+i,class:'gv'});
+        drawStackedBar(document.getElementById('gv_'+i), buckets, COLORS);
+      }
+      
+    }
+     
+    function formatScoreBand(bands, i) {
+      if (i === 0) {
+        return '>= ' + bands[0];
+      }
+      if (i === bands.length) {
+        return '< ' + bands[bands.length - 1];
+      }
+      return  (bands[i]) + ' to ' + (bands[i-1] - 1);
+    }
+        
+     /*
+      values - should be an array of ints
+      bands - should be an array of ints, sorted descending 
+      adjustment - is added to each item in values, before it is processed
+      
+      returns array of ints, of size (bands+1) , with counts of occurences of the items in values that were
+        greater or equal to than 1st number in bands, 
+        less than 1st number but greater than or equal to 2nd number in bands,
+        less than 2nd number but greater than or equal to 3rd number in bands,
+        ...
+        less than 2nd-to-last number but greater than or equal to last number in bands,
+        less than last number in band
+       
+    */   
+    function bucketize(values, bands, adjustment) {
+      var buckets = [];
+      for (var i = 0; i <= bands.length; i++) {
+        buckets.push(0);
+      }
+      //
+      var valuesCount = values.length;
+      var bandsCount = bands.length;
+      valuesLoop: while (valuesCount-- > 0) { // process each value
+        var value = values[valuesCount] + adjustment;
+        for (var j = 0; j < bandsCount; j++) {
+          if (value >= bands[j]) {
+            ++buckets[j];
+            continue valuesLoop; // short circuit to process next value
+          }
+        }
+        // if we managed to get here, we were unable to match any other band for this value 
+        //  so bucketize into the last
+        ++buckets[bandsCount];
+      }
+      return buckets;
+    }
+    
+    /*
+      draws a stacked bar at anchorRef, using elements from values
+      draws stacks from the left to right.
+      if an array of styleClasses are passed in, they are applied in orer to each of the stack elements.
+    
+    
+    */
+    function drawStackedBar(anchorRef, values, styleClasses) {
+      var extents = {w:320, h:18}; // [width, height]
+      var sumValues = values.reduce(function(a,b){return a+b;});
+      var scale = d3.scale.linear()
+                    .domain([0, sumValues])
+                    .range([0, extents.w]);
+      var svg = d3.select(anchorRef)
+          .append("svg")
+          .attr("width", extents.w)
+          .attr("height", extents.h);
+      
+      var accumulatedWidth = 0;
+      
+      values.forEach(function(d,i) {
+        var scaledValue = Math.round(scale(d));
+        svg.append("rect")
+            .attr("x", accumulatedWidth)
+            .attr("y", 0)
+            .attr("width", scaledValue)
+            .attr("height", extents.h)
+            .attr('class', styleClasses[i])
+            .attr('title','abcd');
+        accumulatedWidth += scaledValue;    
+            
+        });
+        
+    }
+    
+    function drawSwatch(anchorRef, styleClass) {
+      var size = 12;
+      var svg = d3.select(anchorRef).append('svg').attr({width:size,height:size});
+      svg.append('rect').attr({width:size,height:size,class:styleClass});
+    }
+    
+    </script>
+    
+  </head>
+  <body>
+
+  <h1>Score Change Outcomes Simulation</h1>
+
+<hr />
+
+<dl class="dl-horizontal">
+  <dt>Rule name</dt>
+  <dd>Rule under consideration (score = <span id="current_score">60</span>)</dd>
+  <dt>Execution Count</dt>
+  <dd><span id="exec_count"></span></dd>  
+  <dt>Scores from</dt>
+  <dd><input type="number" class="form-control input-sm" id="score_from" value="" style="max-width:100px;"></dd>
+  <dt>Scores to</dt>
+  <dd><input type="number" class="form-control input-sm" id="score_to" value="" style="max-width:100px;"></dd>
+  <dt>In steps of</dt>
+  <dd><input type="number" class="form-control input-sm" id="score_step" value="20" style="max-width:100px;"></dd>  
+  <dt></dt>
+  <dd><button type="button" class="btn btn-primary" onclick="calc()">Run Simulation</button></dd>
+</dl>
+
+<hr />
+
+<div id="data1"></div>
+
+<script>init();</script>
+
+  </body>
+</html>

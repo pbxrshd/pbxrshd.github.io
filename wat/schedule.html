@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+  <title>Hermes - Schedule</title>
+  <link rel="stylesheet" href="res/css/site.css">
+  <script src="res/js/data.js"></script>
+  <script src="res/js/site.js"></script>
+
+</head>
+<body id="schedule">
+
+  <div id="main_header" class="fixed-header">
+    <div class="header-left"><img src="res/img/main-menu.png" id="main_menu_icon" onclick="UI.event('main_menu_icon')" class="header-icon" /></div>
+    <div class="header-center">SCHEDULE</div>
+    <div class="header-right header-placeholder"></div>
+  </div>
+
+  <div id="body_section">
+    <div id="body_top"></div>
+    <div class="body-top-pad"></div>
+    <div class="sub-container">
+      <div class="sub-left text-icon" onclick="UI.event('schedule_view_change', 1);">&lt;</div>
+      <div class="sub-center"></div>
+      <div class="sub-right text-icon" onclick="UI.event('schedule_view_change', -1);">&gt;</div>
+    </div>
+
+    <div class="schedule-section">
+      <div class="schedule-entry" id="entry_0">
+        <div class="entry-lhs">
+          <div class="entry-day-date">
+            <div class="entry-day">Mon</div>
+            <div class="entry-date"></div>
+          </div>
+        </div>
+        <div class="entry-rhs">
+        </div>
+      </div>
+      <div class="schedule-entry" id="entry_1">
+        <div class="entry-lhs">
+          <div class="entry-day-date">
+            <div class="entry-day">Tue</div>
+            <div class="entry-date"></div>
+          </div>
+        </div>
+        <div class="entry-rhs">
+        </div>
+      </div>
+      <div class="schedule-entry" id="entry_2">
+        <div class="entry-lhs">
+          <div class="entry-day-date">
+            <div class="entry-day">Wed</div>
+            <div class="entry-date"></div>
+          </div>
+        </div>
+        <div class="entry-rhs">
+        </div>
+      </div>
+      <div class="schedule-entry" id="entry_3">
+        <div class="entry-lhs">
+          <div class="entry-day-date">
+            <div class="entry-day">Thu</div>
+            <div class="entry-date"></div>
+          </div>
+        </div>
+        <div class="entry-rhs">
+        </div>
+      </div>
+      <div class="schedule-entry" id="entry_4">
+        <div class="entry-lhs">
+          <div class="entry-day-date">
+            <div class="entry-day">Fri</div>
+            <div class="entry-date"></div>
+          </div>
+        </div>
+        <div class="entry-rhs">
+        </div>
+      </div>
+      <div class="schedule-entry" id="entry_5">
+        <div class="entry-lhs">
+          <div class="entry-day-date">
+            <div class="entry-day">Sat</div>
+            <div class="entry-date"></div>
+          </div>
+        </div>
+        <div class="entry-rhs">
+        </div>
+      </div>
+      <div class="schedule-entry" id="entry_6">
+        <div class="entry-lhs">
+          <div class="entry-day-date">
+            <div class="entry-day">Sun</div>
+            <div class="entry-date"></div>
+          </div>
+        </div>
+        <div class="entry-rhs">
+        </div>
+      </div>
+    </div>
+
+    <div id="main_menu" class="hide" onclick="UI.event('main_menu_item', event)">
+      <a href="#" class="main-menu-item">Raptors</a>
+      <a href="#" class="main-menu-item">Reports</a>
+      <a href="#" class="main-menu-item">Settings</a>
+      <a href="#" class="main-menu-item">Help</a>
+    </div>
+
+  </div><!-- #body_section  -->
+
+<script>
+  UI.init("Schedule");
+</script>
+</body>
+</html>
