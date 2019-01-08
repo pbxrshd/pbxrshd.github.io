@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Interceptas</title>
+
+    <link href="res/css/bootstrap.min.css" rel="stylesheet">
+    <link href="res/css/fontawesome.css" rel="stylesheet">
+
+    <script type="text/javascript" src="res/js/jquery.min.js"></script>
+    <script type="text/javascript" src="res/js/popper.min.js"></script>
+    <script type="text/javascript" src="res/js/bootstrap.min.js"></script>
+
+    <script>
+        function navMenuClicked(ref, menuItem) {
+            var title = "";
+            var contentImageSrc = "";
+            var id = null;
+            if (ref) {
+                title = ref.textContent;
+                id = ref.getAttribute("data-id");
+            }
+            if (menuItem) {
+                title = menuItem.name;
+                id = menuItem.id;
+            }
+            if (!title) {
+                contentImageSrc = "res/img/content/home.png";
+            }
+            document.querySelector("div.content div.title1").textContent = title;
+            document.querySelector("div.content img.content").src = contentImageSrc;
+            QuickMenu.addMenuFavorite(id);
+        }
+
+        var QuickMenu =  (function() {
+                "use strict";
+                var DEFAULT_PLACEHOLDER = "search for menu...";
+
+                var MENUS = [
+                    {id:"0", name:"Property", group:"System"},
+                    {id:"1", name:"Control Room", group:"System"},
+                    {id:"2", name:"Hierarchy", group:"System"},
+                    {id:"3", name:"Service", group:"System"},
+                    {id:"4", name:"Cleanse", group:"System"},
+                    {id:"5", name:"Auditing", group:"System"},
+                    {id:"6", name:"Thread Pool", group:"System"},
+                    {id:"7", name:"Billing Type", group:"System"},
+                    {id:"8", name:"Reason Codes", group:"System"},
+                    {id:"9", name:"Reason Code Exceptions", group:"System"},
+                    {id:"10", name:"Link Transaction Config", group:"System"},
+                    {id:"11", name:"BIN Ranges", group:"System"},
+                    {id:"12", name:"BIN/IIN Data", group:"System"},
+                    {id:"13", name:"Feature Maintenance", group:"System"},
+                    {id:"14", name:"Hierarchy Associate", group:"System"},
+                    {id:"15", name:"Brand Name", group:"System"},
+                    {id:"16", name:"Key Store Entry", group:"System"},
+                    {id:"17", name:"Data Center", group:"System"},
+                    {id:"18", name:"API User", group:"System"},
+                    {id:"19", name:"API Config", group:"System"},
+                    {id:"20", name:"Mask", group:"Interface"},
+                    {id:"21", name:"Mask Config", group:"Interface"},
+                    {id:"22", name:"Importer", group:"Interface"},
+                    {id:"23", name:"Web Import", group:"Interface"},
+                    {id:"24", name:"Template", group:"Interface"},
+                    {id:"25", name:"Help Text", group:"Interface"},
+                    {id:"26", name:"XML Mask", group:"Interface"},
+                    {id:"27", name:"Fixed Width Mask", group:"Interface"},
+                    {id:"28", name:"JSON Mask", group:"Interface"},
+                    {id:"29", name:"RTD Route", group:"Interface"},
+                    {id:"30", name:"PayPal Config", group:"Interface"},
+                    {id:"31", name:"API Mask", group:"Interface"},
+                    {id:"32", name:"Virtual Table", group:"Environment"},
+                    {id:"33", name:"Business Alias", group:"Environment"},
+                    {id:"34", name:"Logical Type", group:"Environment"},
+                    {id:"35", name:"Flex Label", group:"Environment"},
+                    {id:"36", name:"Image Library", group:"Environment"},
+                    {id:"37", name:"Followup", group:"Environment"},
+                    {id:"38", name:"Resolution Wizard", group:"Environment"},
+                    {id:"39", name:"Bulk Procedure", group:"Environment"},
+                    {id:"40", name:"Queue Breakout", group:"Environment"},
+                    {id:"41", name:"Review Function", group:"Environment"},
+                    {id:"42", name:"Audit Type", group:"Environment"},
+                    {id:"43", name:"Generic Type", group:"Environment"},
+                    {id:"44", name:"Transaction Data Entry Config", group:"Environment"},
+                    {id:"45", name:"Industry", group:"Environment"},
+                    {id:"46", name:"ADW Business Alias", group:"Environment"},
+                    {id:"47", name:"Transaction Page Layout", group:"Environment"},
+                    {id:"48", name:"Document Categories", group:"Documents"},
+                    {id:"49", name:"Template Field Maps", group:"Documents"},
+                    {id:"50", name:"Document Library Items", group:"Documents"},
+                    {id:"51", name:"Document Assembly Instructions", group:"Documents"},
+                    {id:"52", name:"User", group:"Client"},
+                    {id:"53", name:"Role", group:"Client"},
+                    {id:"54", name:"Assignment Groups", group:"Client"},
+                    {id:"55", name:"Builders", group:"Client"},
+                    {id:"56", name:"Rule Set Version", group:"Client"},
+                    {id:"57", name:"Rules and Rule Sets", group:"Client"},
+                    {id:"58", name:"Rule Category", group:"Client"},
+                    {id:"59", name:"Maintain Queue Filters", group:"Client"},
+                    {id:"60", name:"Maintain Queue Dashboards", group:"Client"},
+                    {id:"61", name:"Rule Sandbox", group:"Client"},
+                    {id:"62", name:"Rule Sandbox Report", group:"Client"},
+                    {id:"63", name:"Negative Tables", group:"Client"},
+                    {id:"64", name:"Negative Values", group:"Client"},
+                    {id:"65", name:"Literal", group:"Client"},
+                    {id:"66", name:"Maintain Address Book", group:"Client"},
+                    {id:"67", name:"Maintain Alerts", group:"Client"},
+                    {id:"68", name:"Maintain Cases", group:"Client"},
+                    {id:"69", name:"Reference Table", group:"Client"},
+                    {id:"70", name:"Reference Content", group:"Client"},
+                    {id:"71", name:"Cross Reference", group:"Client"},
+                    {id:"72", name:"Profile Definitions", group:"Client"},
+                    {id:"73", name:"Profile Instructions", group:"Client"},
+                    {id:"74", name:"User Preferences", group:"Client"},
+                    {id:"75", name:"Service Storage Outputs", group:"Client"},
+                    {id:"76", name:"Recommendation Disposition", group:"Client"},
+                    {id:"77", name:"Time Keeping User", group:"Client"},
+                    {id:"78", name:"Master Clients", group:"Boarding"},
+                    {id:"79", name:"Tenant Types", group:"Boarding"},
+                    {id:"80", name:"Tenants", group:"Boarding"},
+                    {id:"81", name:"Literal Names", group:"Boarding"},
+                    {id:"82", name:"Literal Questions", group:"Boarding"},
+                    {id:"83", name:"Literal Answers", group:"Boarding"},
+                    {id:"84", name:"Literal Answer Options", group:"Boarding"},
+                    {id:"85", name:"Questionnaires", group:"Boarding"},
+                    {id:"86", name:"Boarding Wizard", group:"Boarding"},
+                    //{id:"87", name:"Master Tenants", group:"AOI"},
+                    //{id:"88", name:"Rule Set Recommendations", group:"AOI"},
+                    //{id:"89", name:"IOI Modules", group:"AOI"},
+                    //{id:"90", name:"SAML Configuration", group:"AOI"},
+                    {id:"91", name:"Queue Review", group:"Agent"},
+                    {id:"92", name:"Find Transaction", group:"Agent"},
+                    {id:"93", name:"Assignment Group Dashboard", group:"Agent"},
+                    {id:"94", name:"Chargeback Review", group:"Agent"},
+                    {id:"95", name:"Find Chargeback Transaction", group:"Agent"},
+                    {id:"96", name:"Link Orphan Documents", group:"Agent"},
+                    {id:"97", name:"Virtual Terminal", group:"Agent"},
+                    {id:"98", name:"Case Review", group:"Agent"},
+                    {id:"99", name:"Find Case", group:"Agent"},
+                    {id:"100", name:"Queue For Process 4", group:"Agent"},
+                    {id:"101", name:"Find For Process 4", group:"Agent"},
+                    {id:"102", name:"View Single Transaction", group:"Agent"},
+                    {id:"103", name:"Address Book", group:"Agent"},
+                    {id:"104", name:"Alerts", group:"Agent"},
+                    {id:"105", name:"Client", group:"Billing"},
+                    {id:"106", name:"Contract", group:"Billing"},
+                    {id:"107", name:"Contract Product", group:"Billing"},
+                    {id:"108", name:"Data Download", group:"Reporting"},
+                    {id:"109", name:"Data Extract", group:"Reporting"},
+                    {id:"110", name:"Encryption Keys", group:"Reporting"},
+                    {id:"111", name:"Report Definition", group:"Reporting"},
+                    {id:"112", name:"Enterprise Reports", group:"Reporting"},
+                    {id:"113", name:"Scheduled Reports", group:"Reporting"},
+                    {id:"114", name:"Feature References", group:"Entity References"},
+                    {id:"115", name:"Service References", group:"Entity References"},
+                    {id:"116", name:"Rule References", group:"Entity References"},
+                    {id:"117", name:"Role References", group:"Entity References"},
+                    {id:"118", name:"Ruleset References", group:"Entity References"},
+                    {id:"119", name:"Document Category References", group:"Entity References"},
+                    {id:"120", name:"Assignment Group References", group:"Entity References"},
+                    {id:"121", name:"Resolution References", group:"Entity References"},
+                    {id:"122", name:"Followup References", group:"Entity References"}
+                ];
+            /*
+                var RECENTS = [{id:"10", name:"Link Transaction Config", group:"System"},
+                    {id:"11", name:"BIN Ranges", group:"System"},
+                    {id:"15", name:"Brand Name", group:"System"}];
+                var FAVORITES = [{id:"1", name:"Control Room", group:"System"},
+                                {id:"2", name:"Hierarchy", group:"System"}];
+            */
+            var RECENTS = [];
+            var FAVORITES = [];
+
+                var menuNameRef = null;
+                var inputRef = null;
+                var contentRef = null;
+                var contentSearchHintRef = null;
+                var contentNomatchesHintRef = null;
+                var contentPinHintRef = null;
+                var contentSuggestionsRef = null;
+                var contentFavoritesRecents = null;
+                var contentFavoritesRef = null;
+                var contentRecentsRef = null;
+                var contentFavoritesHeaderRef = null;
+                var contentRecentsHeaderRef = null;
+
+                //
+                function init() {
+                    // set references
+                    menuNameRef = document.querySelector("#quick_menu div.menu-name");
+                    inputRef = document.querySelector("#quick_menu input.search");
+                    contentRef = document.querySelector("#quick_menu div.content");
+                    contentSearchHintRef = document.querySelector("#quick_menu div.content div.hint.search");
+                    contentNomatchesHintRef = document.querySelector("#quick_menu div.content div.hint.nomatches");
+                    contentPinHintRef = document.querySelector("#quick_menu div.content div.hint.pin");
+                    contentSuggestionsRef = document.querySelector("#quick_menu div.content div.list.suggestions");
+                    contentFavoritesRef = document.querySelector("#quick_menu div.content div.list.favorites");
+                    contentRecentsRef = document.querySelector("#quick_menu div.content div.list.recents");
+                    contentFavoritesRecents = document.querySelector("#quick_menu div.content div.favorites-recents");
+                    contentFavoritesHeaderRef = document.querySelector("#quick_menu div.content div.section-header.favorites");
+                    contentRecentsHeaderRef = document.querySelector("#quick_menu div.content div.section-header.recents");
+                    //
+                    populateFavorites();
+                    populateRecents();
+                    //
+                    inputRef.value = "";
+                }
+                //
+                function populateFavorites() {
+                    contentFavoritesRef.textContent = "";
+                    contentFavoritesHeaderRef.style.display = (FAVORITES.length > 0) ? "block" : "none";
+                    FAVORITES.forEach(function(item) {
+                        contentFavoritesRef.appendChild(createItem(item));
+                    });
+                    contentPinHintRef.style.display = (FAVORITES.length < 1) ? "block" : "none";
+                }
+                //
+                function populateRecents() {
+                    contentRecentsRef.textContent = "";
+                    contentRecentsHeaderRef.style.display = (RECENTS.length > 0) ? "block" : "none";
+                    RECENTS.forEach(function(item) {
+                        contentRecentsRef.appendChild(createItem(item));
+                    });
+                }
+                //
+                function mouseOver(e) {
+                    menuNameRef.style.display = "none";
+                    inputRef.placeholder = DEFAULT_PLACEHOLDER;
+                    inputRef.style.display = "block";
+                    /*
+                    var suggestions = document.querySelectorAll("#quick-menu div.suggestions div.item").length;
+                    console.log("suggestions:" + suggestions);
+                    if (inputRef && suggestions < 1) {
+                        inputRef.value = "";
+                    }
+                    */
+                    //var suggestions = document.querySelectorAll("#quick-menu div.suggestions div.item").length;
+                    //contentNomatchesHintRef.style.display = (inputRef.value && (suggestions < 1)) ? "block" : "none";
+
+                    contentNomatchesHintRef.style.display = "none";
+                    contentSearchHintRef.style.display = (inputRef.value) ? "none" : "block";
+                    contentRef.style.display = "block";
+                }
+                //
+                function mouseOut(e) {
+                    menuNameRef.style.display = "block";
+                    inputRef.style.display = "none";
+                    contentRef.style.display = "none";
+                }
+                //
+                function inputFocused(ref) {
+                    //var suggestions = document.querySelectorAll("#quick-menu div.suggestions div.item").length;
+                    contentSearchHintRef.style.display = (inputRef.value) ? "none" : "block";
+                    contentNomatchesHintRef.style.display = "none";
+                    inputRef.placeholder = "";
+                }
+                //
+                function inputChanged(ref) {
+                    var inputValue = ref.value;
+                    contentSuggestionsRef.textContent = "";
+                    contentSearchHintRef.style.display = (inputValue) ? "none" : "block";
+                    if (inputValue) {
+                        var matches = getMatches(inputValue);
+                        if (matches.length > 0) {
+                            displaySuggestions(matches, inputValue);
+                        }
+                        contentNomatchesHintRef.style.display = (matches.length > 0) ? "none" : "block";
+                    }
+                }
+                //
+                function itemClicked(ref, e) {
+                    var id = ref.getAttribute("data-id");
+                    var item = null;
+                    for (var i = 0; i < MENUS.length; i++) {
+                        if (id === MENUS[i].id) {
+                            item = clone(MENUS[i]);
+                            break; // out of for loop
+                        }
+                    }
+                    if (item) {
+                        if (e.target.classList.contains("icon")) {
+                            pinUnpin(e.target, item);
+                        } else {
+                            menuClicked(item);
+                        }
+                    } else {
+                        console.log("menu item not found for id:" + id);
+                    }
+                }
+                //
+                function pinUnpin(ref, item) {
+                    var pin = ref.classList.contains("unpinned");
+                    if (pin) { // unpinned to pinned
+                        addFavorite(item);
+                        populateRecents();
+                    } else { // pinned to unpinned
+                        removeFavorite(item);
+                    }
+                    populateFavorites();
+                    //
+                    var suggestions = document.querySelectorAll("div.suggestions div.item");
+                    for (var i = 0; i < suggestions.length; i++) {
+                        var suggestion = suggestions[i];
+                        if (item.id === suggestion.getAttribute("data-id")) {
+                            var iconDiv = suggestion.querySelector("div.icon");
+                            if (iconDiv.classList.contains("unpinned")) {
+                                iconDiv.classList.remove("unpinned");
+                                iconDiv.classList.add("pinned");
+                            } else {
+                                iconDiv.classList.remove("pinned");
+                                iconDiv.classList.add("unpinned");
+                            }
+                            break; // for loop
+                        }
+                    }
+                }
+                //
+                function menuClicked(item) {
+                    addRecent(item);
+                    inputRef.value = "";
+                    contentSuggestionsRef.textContent = "";
+                    navMenuClicked(null, item);
+                    mouseOut();
+                }
+                //
+                function addFavorite(item) {
+                    // add to favs if not already there
+                    if (!isItemFavorite(item)) {
+                        FAVORITES.unshift(clone(item));
+                    }
+                    // remove from recents if there
+                    for (var i = 0; i < RECENTS.length; i++) {
+                        if (item.id === RECENTS[i].id) {
+                            RECENTS.splice(i,1);
+                            break; // out of for loop
+                        }
+                    }
+                }
+                //
+                function removeFavorite(item) {
+                    for (var i = 0; i < FAVORITES.length; i++) {
+                        if (item.id === FAVORITES[i].id) {
+                            FAVORITES.splice(i,1);
+                            break; // out of for loop
+                        }
+                    }
+                }
+                //
+                function addRecent(item) {
+                    // add to recents if not already in favs and not already in recents
+                    if (!isItemFavorite(item) && !isItemRecent(item)) {
+                        RECENTS.unshift(clone(item));
+                    }
+                    RECENTS.splice(5); // limit to 5 recents
+                }
+                //
+                function displaySuggestions(items, partialMatch) {
+                    contentSuggestionsRef.textContent = "";
+                    items.forEach(function(item) {
+                        contentSuggestionsRef.appendChild(createItem(item, partialMatch));
+                    });
+                }
+                //
+                function createItem(item, partialMatch) {
+                    var parentElement = document.createElement("div");
+                    parentElement.setAttribute("class", "item");
+                    parentElement.setAttribute("data-id", item.id);
+                    parentElement.setAttribute("onclick", "QuickMenu.itemClicked(this,event)");
+                    //parentElement.setAttribute("onclick", "testMove(this)");
+                    var iconElement = document.createElement("div");
+                    iconElement.setAttribute("class", "icon fa fa-thumbtack " + (isItemFavorite(item) ? "pinned" : "unpinned"));
+                    var itemElement = document.createElement("div");
+                    itemElement.setAttribute("class", "label");
+                    var label = item.name;
+                    if (partialMatch) {
+                        var matchIndex = label.toLocaleLowerCase().indexOf(partialMatch.toLocaleLowerCase());
+                        var pre = label.slice(0, matchIndex);
+                        var mid = label.slice(matchIndex, matchIndex + partialMatch.length);
+                        var post = label.slice(matchIndex + partialMatch.length);
+                        label = pre + "<b>" + mid + "</b>" + post;
+                    }
+                    itemElement.innerHTML = label;
+                    parentElement.appendChild(iconElement);
+                    parentElement.appendChild(itemElement);
+                    return parentElement;
+                }
+                //
+                function isItemFavorite(item) {
+                    return FAVORITES.some(function(e) {return e.id === item.id;});
+                }
+                //
+                function isItemRecent(item) {
+                    return RECENTS.some(function(e) {return e.id === item.id;});
+                }
+                //
+                function addMenuFavorite(id) {
+                    addRecent(getMenuItem(id));
+                    populateFavorites();
+                    populateRecents();
+                }
+                //
+                function getMatches(partialMatch) {
+                    var matches = [];
+                    //if (partial.length > 1) {
+                        partialMatch = partialMatch.toLowerCase();
+                        MENUS.forEach(function(item) {
+                            if (item.name.toLowerCase().indexOf(partialMatch) > -1) {
+                                matches.push(item);
+                            }
+                        });
+                    //}
+                    return matches;
+                }
+                //
+                function getMenuItem(dataId) {
+                    var menuItem = null;
+                    MENUS.some(function(menu) {
+                        if (dataId === menu.id) {
+                            menuItem = clone(menu);
+                            return true;
+                        }
+                        return false;
+                    });
+                    return menuItem;
+                }
+                //
+                function clone(obj) {
+                    return JSON.parse(JSON.stringify(obj));
+                }
+                //
+                return {
+                    init : init,
+                    mouseOver : mouseOver,
+                    mouseOut : mouseOut,
+                    inputFocused : inputFocused,
+                    inputChanged : inputChanged,
+                    itemClicked : itemClicked,
+                    addMenuFavorite : addMenuFavorite,
+
+                    createItem : createItem,
+                    clone : clone,
+                    getMenuItem : getMenuItem
+                };
+            })(); // QuickMenu
+
+
+
+function testSetup() {
+    var items = [
+        {id:"0", name:"Property", group:"System"},
+        {id:"1", name:"Control Room", group:"System"},
+        {id:"2", name:"Hierarchy", group:"System"},
+        {id:"3", name:"Service", group:"System"},
+        {id:"4", name:"Cleanse", group:"System"},
+        {id:"5", name:"Auditing", group:"System"}];
+    var favRef = document.querySelector("div.d0 div.fav");
+    items.forEach(function(item) {
+        favRef.appendChild(QuickMenu.createItem(item));
+    });
+    items = [
+        {id:"10", name:"Link Transaction Config", group:"System"},
+        {id:"11", name:"BIN Ranges", group:"System"},
+        {id:"12", name:"BIN/IIN Data", group:"System"},
+        {id:"13", name:"Feature Maintenance", group:"System"},
+        {id:"14", name:"Hierarchy Associate", group:"System"},
+        {id:"15", name:"Brand Name", group:"System"}
+    ];
+    var recRef = document.querySelector("div.d0 div.rec");
+    items.forEach(function(item) {
+        recRef.appendChild(QuickMenu.createItem(item));
+    });
+}
+function testMove(ref) {
+    // fadeout source
+    ref.classList.add("fade-out");
+    // create target, from source
+    var targetItem = QuickMenu.createItem(QuickMenu.getMenuItem(ref.getAttribute("data-id")));
+    // add target, visibility none
+    targetItem.style.visibility = "hidden";
+    document.querySelector("div.d0 div.fav").appendChild(targetItem);
+    // fadein target
+    targetItem.classList.add("fade-in");
+    // delete source
+    setTimeout(function(){ref.parentNode.removeChild(ref);}, 250);
+    // remove animation classes from target
+    setTimeout(function(){targetItem.style.visibility = "inherit";}, 250);
+}
+function testRemove(ref) {
+    ref.classList.add("fade-out");
+    setTimeout(function(){ref.parentNode.removeChild(ref);}, 250);
+    //ref.parentNode.removeChild(ref);
+}
+
+    </script>
+
+    <style type="text/css">
+        body {
+            background-color: #fff;
+        }
+        div.header {
+            width: 100%;
+            text-align: center;
+            margin: 0px 10px;
+        }
+        div.sub-header {
+            background-color: #f2f0f1;
+            border-top: 2px solid #a30025;
+            border-bottom: 1px solid #e3e3e3;
+            min-width: 1440px;
+        }
+        div.nav-container {
+            max-width: 1140px;
+            margin: auto;
+        }
+        div.nav {
+            height: 48px;
+            margin-left: 32px;
+        }
+
+        div.quick-menu {
+            color: #777777;
+            font-size: 14px;
+        }
+        div.quick-menu div.menu-name {
+            color: #777777;
+            font-size: 15px;
+            margin: 11px 42px 0px 0px;
+        }
+        div.quick-menu div.menu-name i {
+            color: #c70003;
+        }
+        div.quick-menu span.label {
+
+        }
+        div.quick-menu input.search {
+            display: none;
+            color: #555;
+            height: 43px;
+            border-radius: 4px 4px 0px 4px;
+            margin-top: 6px;
+            width: 144px;
+        }
+        div.quick-menu input.search::placeholder {
+            font-size: 14px;
+            color: #aaa;
+            font-style: italic;
+            /*font-family: Helvetica, 'FontAwesome', sans-serif;*/
+        }
+        div.quick-menu div.content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 240px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            border-left: 1px solid #c4c4c4;
+            border-right: 1px solid #c4c4c4;
+            border-bottom: 1px solid #c4c4c4;
+            border-radius: 0px 0px 4px 4px;
+            margin: 0px 0px 0px 4px;
+            padding-bottom: 10px;
+            z-index: 1;
+        }
+        div.quick-menu div.content div.hint {
+            color: #909090;
+            padding: 12px 8px 8px 8px;
+            line-heightx: 2.4;
+            font-style: italic;
+            font-size: 12px;
+            display : none;
+        }
+        div.quick-menu div.content div.items {
+            cursor: pointer;
+        }
+        div.quick-menu div.item {
+            color: #666;
+            font-size: 14px;
+        }
+        div.quick-menu div.item:hover {
+            color: #fff;
+            background-color: #3980c3;
+        }
+        div.quick-menu div.item div.icon {
+            display: inline-block;
+            padding: 8px 6px 8px 4px;
+            background-color: #fff;
+        }
+        div.quick-menu div.item div:hover.icon.pinned {
+            color:#c0c0c0;
+        }
+        div.quick-menu div.item div.icon.pinned {
+            color:#c70003;
+        }
+        div.quick-menu div.item div.icon.unpinned {
+            color:#c0c0c0;
+        }
+        div.quick-menu div.item div:hover.icon.unpinned {
+            color:#c70003;
+        }
+        div.quick-menu div.label {
+            display: inline-block;
+            padding: 4px 0px 4px 4px;
+        }
+        div.quick-menu div.section-title {
+            color: #aaa;
+            background-color: white;
+            margin: -29px 0px 0px 20px;
+            width: fit-content;
+            font-size: 12px;
+            font-style: italic;
+            padding: 4px;
+        }
+        div.quick-menu hr.section-sep {
+        }
+
+        div.menu {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        div.menu div.label {
+            color: #777777;
+            font-size: 15px;
+            margin: 11px;
+            height: 24px;
+        }
+        div.menu:hover {
+            background-color: #fff;
+        }
+        div.menu div.items {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 240px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            border-left: 1px solid #c4c4c4;
+            border-right: 1px solid #c4c4c4;
+            border-bottom: 1px solid #c4c4c4;
+            border-radius: 0px 0px 4px 4px;
+            margin-top: 2px;
+            padding-bottom: 10px;
+            z-index: 1;
+        }
+        div.menu div.item {
+            color: #777777;
+            font-size: 14px;
+            padding: 4px 0px 4px 18px;
+        }
+        div.menu div.item:hover {
+            color: #fff;
+            background-color: #3980c3;
+        }
+        div.menu:hover div.items {
+            display: block;
+        }
+        img.global-search {
+            float: right;
+            margin: -40px 10px 0px 0px;
+        }
+        div.content-container {
+            min-height: 400px;
+            max-width: 1140px;
+            margin: auto;
+        }
+        div.content {
+            margin-left: 24px;
+        }
+        div.title1 {
+            font-size: 30px;
+            letter-spacing: .03em;
+            font-weight: 400;
+            text-transform: uppercase;
+            text-align: left;
+            margin-top: 24px;
+        }
+        div.title2 {
+
+        }
+        div.footer {
+            width: 100%;
+            text-align: center;
+            background-color: #f2f0f1;
+            border-top: 2px solid #a30025;
+        }
+
+        .fade-out {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 0.2s, opacity 0.2s linear;
+        }
+        .fade-in {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.2s linear;
+        }
+
+
+/* temp */
+        div.d0 div.item div.icon {
+            display: inline-block;
+            padding: 8px 6px 8px 4px;
+            background-color: #fff;
+        }
+        div.d0 div.item div.icon.pinned {
+            color:#ff6347;
+        }
+        div.d0 div.item div.icon.unpinned {
+            color:#c0c0c0;
+        }
+        div.d0 div.label {
+            display: inline-block;
+            padding: 4px 0px 4px 4px;
+        }
+
+
+
+    </style>
+
+    </head>
+<body>
+    <div class="header">
+        <img src="res/img/header.png" onclick="itemClicked()"></img>
+    </div>
+
+    <div class="sub-header">
+        <div class="nav-container">
+            <div class="nav">
+                <div id="quick_menu" class="quick-menu" onmouseover="QuickMenu.mouseOver(event)" onmouseout="QuickMenu.mouseOut(event)">
+                    <div class="menu-name"><i class="fa fa-thumbtack pinned"></i> <span class="label">My Favorites</span></div>
+                    <input class="search form-control" type="text" placeholder="search for menu..." onkeyup="QuickMenu.inputChanged(this)" onclick="QuickMenu.inputFocused(this)" onfocus="QuickMenu.inputFocused(this)" />
+                    <div class="content">
+                        <div class="hint nomatches">No matches found</div>
+                        <div class="hint search">
+                            Type in the box above to search for a menu.
+                        </div>
+                        <div class="hint pin">
+                            Click on <i class="fa fa-thumbtack unpinned"></i> to add a menu to your favorites.
+                        </div>
+                        <div class="list suggestions"></div>
+                        <div class="favorites-recents">
+                            <div class="section-header favorites">
+                                <hr class="section-sep" />
+                                <div class="section-title">My Favorites</div>
+                            </div>
+                            <div class="list favorites"></div>
+                            <div class="section-header recents">
+                                <hr class="section-sep" />
+                                <div class="section-title">Recently visited</div>
+                            </div>
+                            <div class="list recents"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">System</div>
+                    <div class="items">
+                        <div class="item" data-id="0" onclick="navMenuClicked(this)">Property</div>
+                        <div class="item" data-id="1" onclick="navMenuClicked(this)">Control Room</div>
+                        <div class="item" data-id="2" onclick="navMenuClicked(this)">Hierarchy</div>
+                        <div class="item" data-id="3" onclick="navMenuClicked(this)">Service</div>
+                        <div class="item" data-id="4" onclick="navMenuClicked(this)">Cleanse</div>
+                        <div class="item" data-id="5" onclick="navMenuClicked(this)">Auditing</div>
+                        <div class="item" data-id="6" onclick="navMenuClicked(this)">Thread Pool</div>
+                        <div class="item" data-id="7" onclick="navMenuClicked(this)">Billing Type</div>
+                        <div class="item" data-id="8" onclick="navMenuClicked(this)">Reason Codes</div>
+                        <div class="item" data-id="9" onclick="navMenuClicked(this)">Reason Code Exceptions</div>
+                        <div class="item" data-id="10" onclick="navMenuClicked(this)">Link Transaction Config</div>
+                        <div class="item" data-id="11" onclick="navMenuClicked(this)">BIN Ranges</div>
+                        <div class="item" data-id="12" onclick="navMenuClicked(this)">BIN/IIN Data</div>
+                        <div class="item" data-id="13" onclick="navMenuClicked(this)">Feature Maintenance</div>
+                        <div class="item" data-id="14" onclick="navMenuClicked(this)">Hierarchy Associate</div>
+                        <div class="item" data-id="15" onclick="navMenuClicked(this)">Brand Name</div>
+                        <div class="item" data-id="16" onclick="navMenuClicked(this)">Key Store Entry</div>
+                        <div class="item" data-id="17" onclick="navMenuClicked(this)">Data Center</div>
+                        <div class="item" data-id="18" onclick="navMenuClicked(this)">API User</div>
+                        <div class="item" data-id="19" onclick="navMenuClicked(this)">API Config</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Interface</div>
+                    <div class="items">
+                        <div class="item" data-id="20" onclick="navMenuClicked(this)">Mask</div>
+                        <div class="item" data-id="21" onclick="navMenuClicked(this)">Mask Config</div>
+                        <div class="item" data-id="22" onclick="navMenuClicked(this)">Importer</div>
+                        <div class="item" data-id="23" onclick="navMenuClicked(this)">Web Import</div>
+                        <div class="item" data-id="24" onclick="navMenuClicked(this)">Template</div>
+                        <div class="item" data-id="25" onclick="navMenuClicked(this)">Help Text</div>
+                        <div class="item" data-id="26" onclick="navMenuClicked(this)">XML Mask</div>
+                        <div class="item" data-id="27" onclick="navMenuClicked(this)">Fixed Width Mask</div>
+                        <div class="item" data-id="28" onclick="navMenuClicked(this)">JSON Mask</div>
+                        <div class="item" data-id="29" onclick="navMenuClicked(this)">RTD Route</div>
+                        <div class="item" data-id="30" onclick="navMenuClicked(this)">PayPal Config</div>
+                        <div class="item" data-id="31" onclick="navMenuClicked(this)">API Mask</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Environment</div>
+                    <div class="items">
+                        <div class="item" data-id="32" onclick="navMenuClicked(this)">Virtual Table</div>
+                        <div class="item" data-id="33" onclick="navMenuClicked(this)">Business Alias</div>
+                        <div class="item" data-id="34" onclick="navMenuClicked(this)">Logical Type</div>
+                        <div class="item" data-id="35" onclick="navMenuClicked(this)">Flex Label</div>
+                        <div class="item" data-id="36" onclick="navMenuClicked(this)">Image Library</div>
+                        <div class="item" data-id="37" onclick="navMenuClicked(this)">Followup</div>
+                        <div class="item" data-id="38" onclick="navMenuClicked(this)">Resolution Wizard</div>
+                        <div class="item" data-id="39" onclick="navMenuClicked(this)">Bulk Procedure</div>
+                        <div class="item" data-id="40" onclick="navMenuClicked(this)">Queue Breakout</div>
+                        <div class="item" data-id="41" onclick="navMenuClicked(this)">Review Function</div>
+                        <div class="item" data-id="42" onclick="navMenuClicked(this)">Audit Type</div>
+                        <div class="item" data-id="43" onclick="navMenuClicked(this)">Generic Type</div>
+                        <div class="item" data-id="44" onclick="navMenuClicked(this)">Transaction Data Entry Config</div>
+                        <div class="item" data-id="45" onclick="navMenuClicked(this)">Industry</div>
+                        <div class="item" data-id="46" onclick="navMenuClicked(this)">ADW Business Alias</div>
+                        <div class="item" data-id="47" onclick="navMenuClicked(this)">Transaction Page Layout</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Documents</div>
+                    <div class="items">
+                        <div class="item" data-id="48" onclick="navMenuClicked(this)">Document Categories</div>
+                        <div class="item" data-id="49" onclick="navMenuClicked(this)">Template Field Maps</div>
+                        <div class="item" data-id="50" onclick="navMenuClicked(this)">Document Library Items</div>
+                        <div class="item" data-id="51" onclick="navMenuClicked(this)">Document Assembly Instructions</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Client</div>
+                    <div class="items">
+                        <div class="item" data-id="52" onclick="navMenuClicked(this)">User</div>
+                        <div class="item" data-id="53" onclick="navMenuClicked(this)">Role</div>
+                        <div class="item" data-id="54" onclick="navMenuClicked(this)">Assignment Groups</div>
+                        <div class="item" data-id="55" onclick="navMenuClicked(this)">Builders</div>
+                        <div class="item" data-id="56" onclick="navMenuClicked(this)">Rule Set Version</div>
+                        <div class="item" data-id="57" onclick="navMenuClicked(this)">Rules and Rule Sets</div>
+                        <div class="item" data-id="58" onclick="navMenuClicked(this)">Rule Category</div>
+                        <div class="item" data-id="59" onclick="navMenuClicked(this)">Maintain Queue Filters</div>
+                        <div class="item" data-id="60" onclick="navMenuClicked(this)">Maintain Queue Dashboards</div>
+                        <div class="item" data-id="61" onclick="navMenuClicked(this)">Rule Sandbox</div>
+                        <div class="item" data-id="62" onclick="navMenuClicked(this)">Rule Sandbox Report</div>
+                        <div class="item" data-id="63" onclick="navMenuClicked(this)">Negative Tables</div>
+                        <div class="item" data-id="64" onclick="navMenuClicked(this)">Negative Values</div>
+                        <div class="item" data-id="65" onclick="navMenuClicked(this)">Literal</div>
+                        <div class="item" data-id="66" onclick="navMenuClicked(this)">Maintain Address Book</div>
+                        <div class="item" data-id="67" onclick="navMenuClicked(this)">Maintain Alerts</div>
+                        <div class="item" data-id="68" onclick="navMenuClicked(this)">Maintain Cases</div>
+                        <div class="item" data-id="69" onclick="navMenuClicked(this)">Reference Table</div>
+                        <div class="item" data-id="70" onclick="navMenuClicked(this)">Reference Content</div>
+                        <div class="item" data-id="71" onclick="navMenuClicked(this)">Cross Reference</div>
+                        <div class="item" data-id="72" onclick="navMenuClicked(this)">Profile Definitions</div>
+                        <div class="item" data-id="73" onclick="navMenuClicked(this)">Profile Instructions</div>
+                        <div class="item" data-id="74" onclick="navMenuClicked(this)">User Preferences</div>
+                        <div class="item" data-id="75" onclick="navMenuClicked(this)">Service Storage Outputs</div>
+                        <div class="item" data-id="76" onclick="navMenuClicked(this)">Recommendation Disposition</div>
+                        <div class="item" data-id="77" onclick="navMenuClicked(this)">Time Keeping User</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Boarding</div>
+                    <div class="items">
+                        <div class="item" data-id="78" onclick="navMenuClicked(this)">Master Clients</div>
+                        <div class="item" data-id="79" onclick="navMenuClicked(this)">Tenant Types</div>
+                        <div class="item" data-id="80" onclick="navMenuClicked(this)">Tenants</div>
+                        <div class="item" data-id="81" onclick="navMenuClicked(this)">Literal Names</div>
+                        <div class="item" data-id="82" onclick="navMenuClicked(this)">Literal Questions</div>
+                        <div class="item" data-id="83" onclick="navMenuClicked(this)">Literal Answers</div>
+                        <div class="item" data-id="84" onclick="navMenuClicked(this)">Literal Answer Options</div>
+                        <div class="item" data-id="85" onclick="navMenuClicked(this)">Questionnaires</div>
+                        <div class="item" data-id="86" onclick="navMenuClicked(this)">Boarding Wizard</div>
+                    </div>
+                </div>
+                <!--
+                <div class="menu">
+                    <div class="label">AOI</div>
+                    <div class="items">
+                        <div class="item" data-id="87" onclick="navMenuClicked(this)">Master Tenants</div>
+                        <div class="item" data-id="88" onclick="navMenuClicked(this)">Rule Set Recommendations</div>
+                        <div class="item" data-id="89" onclick="navMenuClicked(this)">IOI Modules</div>
+                        <div class="item" data-id="90" onclick="navMenuClicked(this)">SAML Configuration</div>
+                    </div>
+                </div>
+                -->
+                <div class="menu">
+                    <div class="label">Agent</div>
+                    <div class="items">
+                        <div class="item" data-id="91" onclick="navMenuClicked(this)">Queue Review</div>
+                        <div class="item" data-id="92" onclick="navMenuClicked(this)">Find Transaction</div>
+                        <div class="item" data-id="93" onclick="navMenuClicked(this)">Assignment Group Dashboard</div>
+                        <div class="item" data-id="94" onclick="navMenuClicked(this)">Chargeback Review</div>
+                        <div class="item" data-id="95" onclick="navMenuClicked(this)">Find Chargeback Transaction</div>
+                        <div class="item" data-id="96" onclick="navMenuClicked(this)">Link Orphan Documents</div>
+                        <div class="item" data-id="97" onclick="navMenuClicked(this)">Virtual Terminal</div>
+                        <div class="item" data-id="98" onclick="navMenuClicked(this)">Case Review</div>
+                        <div class="item" data-id="99" onclick="navMenuClicked(this)">Find Case</div>
+                        <div class="item" data-id="100" onclick="navMenuClicked(this)">Queue For Process 4</div>
+                        <div class="item" data-id="101" onclick="navMenuClicked(this)">Find For Process 4</div>
+                        <div class="item" data-id="102" onclick="navMenuClicked(this)">View Single Transaction</div>
+                        <div class="item" data-id="103" onclick="navMenuClicked(this)">Address Book</div>
+                        <div class="item" data-id="104" onclick="navMenuClicked(this)">Alerts</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Billing</div>
+                    <div class="items">
+                        <div class="item" data-id="105" onclick="navMenuClicked(this)">Client</div>
+                        <div class="item" data-id="106" onclick="navMenuClicked(this)">Contract</div>
+                        <div class="item" data-id="107" onclick="navMenuClicked(this)">Contract Product</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Reporting</div>
+                    <div class="items">
+                        <div class="item" data-id="108" onclick="navMenuClicked(this)">Data Download</div>
+                        <div class="item" data-id="109" onclick="navMenuClicked(this)">Data Extract</div>
+                        <div class="item" data-id="110" onclick="navMenuClicked(this)">Encryption Keys</div>
+                        <div class="item" data-id="111" onclick="navMenuClicked(this)">Report Definition</div>
+                        <div class="item" data-id="112" onclick="navMenuClicked(this)">Enterprise Reports</div>
+                        <div class="item" data-id="113" onclick="navMenuClicked(this)">Scheduled Reports</div>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="label">Entity References</div>
+                    <div class="items">
+                        <div class="item" data-id="114" onclick="navMenuClicked(this)">Feature References</div>
+                        <div class="item" data-id="115" onclick="navMenuClicked(this)">Service References</div>
+                        <div class="item" data-id="116" onclick="navMenuClicked(this)">Rule References</div>
+                        <div class="item" data-id="117" onclick="navMenuClicked(this)">Role References</div>
+                        <div class="item" data-id="118" onclick="navMenuClicked(this)">Ruleset References</div>
+                        <div class="item" data-id="119" onclick="navMenuClicked(this)">Document Category References</div>
+                        <div class="item" data-id="120" onclick="navMenuClicked(this)">Assignment Group References</div>
+                        <div class="item" data-id="121" onclick="navMenuClicked(this)">Resolution References</div>
+                        <div class="item" data-id="122" onclick="navMenuClicked(this)">Followup References</div>
+                    </div>
+                </div>
+            </div><!-- .nav -->
+        </div><!-- .nav-container -->
+        <img class="global-search" src="res/img/global_search.png"></img>
+    </div><!-- .sub-header -->
+
+    <div class="content-container">
+        <div class="content">
+            <div class="title1">Home</div>
+            <div class="title2"></div>
+            <img class="content" src="res/img/content/home.png"></img>
+        </div>
+    </div>
+
+<!--
+<hr />
+<div class="d0" style="border: 1px solid black; padding: 10px; width: 33%">
+    <div class="fav"></div>
+    <hr />
+    <div class="rec"></div>
+</div>
+<hr />
+-->
+
+    <div class="footer">
+        <img src="res/img/footer.png"></img>
+    </div>
+    <script>
+    QuickMenu.init();
+    //testSetup();
+    </script>
+</body>
+</html>
